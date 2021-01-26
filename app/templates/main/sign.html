@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<!--
+	Epilogue by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+	<head>
+		<title>MemW</title>
+		<meta charset="utf-8" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="/static/css/main.css" />
+	</head>
+	<body>
+
+		<!-- Header -->
+			<header id="header" class="alt">
+				<div class="inner">
+					<h1>MemW</h1>
+					<p>
+						웹 체크리스트 메뮤<br>
+						click to go <a href="/main">home</a>
+					</p>
+				</div>
+			</header>
+
+           {% block content %}
+			<div class="container my-3">
+				<form method="post" class="post-form">
+					{{ form.csrf_token }}
+					{% include "form_errors.html" %}
+					<div class="form-group">
+						<label for="username">사용자 이름</label>
+						<input type="text" class="form-control" name="username" id="username"
+							   value="{{ form.username.data or '' }}">
+					</div>
+					<div class="form-group">
+						<label for="password1">비밀번호</label>
+						<input type="password" class="form-control" name="password1" id="password1"
+							   value="{{ form.password1.data or '' }}">
+					</div>
+					<div class="form-group">
+						<label for="password2">비밀번호 확인</label>
+						<input type="password" class="form-control" name="password2" id="password2"
+							   value="{{ form.password2.data or '' }}">
+					</div>
+					<div class="form-group">
+						<label for="email">이메일</label>
+						<input type="text" class="form-control" name="email" id="email"
+							   value="{{ form.email.data or '' }}">
+					</div>
+					<button type="submit" class="btn btn-primary">생성하기</button>
+				</form>
+			</div>
+			{% endblock %}
+
+		<!-- Scripts -->
+			<script src="/static/js/jquery.min.js"></script>
+			<script src="/static/js/skel.min.js"></script>
+			<script src="/static/js/util.js"></script>
+			<script src="/static/js/main.js"></script>
+
+	</body>
+</html>
