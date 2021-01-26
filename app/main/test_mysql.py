@@ -18,7 +18,7 @@ class sql_instance():
 			 
 			 
 			# SQL query 작성
-			sql= """CREATE TABLE test_table(
+			sql= """CREATE TABLE user(
 			         idx  INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			         name VARCHAR(256) NOT NULL,
 			         nick VARCHAR(256) NOT NULL
@@ -50,8 +50,7 @@ class sql_instance():
 
 		sql = """
 			INSERT INTO test_table(name,nick)
-			VALUES(name,nick)
-		"""
+			VALUES('%s','%s')"""  %(name,nick)
 		cursor.execute(sql)
 		db.commit()
 			 
@@ -61,12 +60,17 @@ class sql_instance():
 		result = cursor.fetchall()
 		return result
 
-	def update(self,)
+	def update(self,nick,name,obj_name):
+		sql = """UPDATE test_table SET name='%s', nick='%s'
+			  WHERE name='%s' """ % (nick,name,obj_name)
+
+		cursor.execute(sql)
+		db.commit()
 
 if __name__ == '__main__':
 	sql = sql_instance()
-	#sql.create_table()
-	sql.insert("chanyang","PraiseBak")
-	print(sql.select("test_table"))
-
-	#변수로 sql에 넣고싶음
+	sql.create_table()
+	#sql.insert("chanyang","PraiseBak")
+	
+	#sql.update("Chanyang","Praisebak","chanyang")
+	#print(sql.select("test_table"))
