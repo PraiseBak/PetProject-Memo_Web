@@ -14,7 +14,7 @@ class Database():
 
 
 	def execute(self, query,args={}):
-		self.cursor.execute(query, args)
+		return self.cursor.execute(query, args)
 
 	def executeOne(self, query, args={}):
 		self.cursor.execute(query,args)
@@ -29,3 +29,14 @@ class Database():
 	def commit(self):
 		self.db.commit()
 
+
+if __name__ == "__main__":
+	create_table = """CREATE TABLE user(
+	               idx INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	               id VARCHAR(256) NOT NULL UNIQUE KEY,
+	               password VARCHAR(256) NOT NULL
+	               );"""
+
+	db = Database()
+	print(db.execute(create_table))
+	db.commit()
