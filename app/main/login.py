@@ -13,9 +13,9 @@ def login():
 	form = UserLoginForm()
 	if request.method == 'POST' and form.validate_on_submit():
 		error = None
-		#db = Database()
+		db = Database()
 		#db.execute("""INSERT INTO user (id,password) VALUES ('%s','%s')""" % ("응애3","응애4"))
-		#db.commit()
+		db.commit()
 		user = db.executeAll("SELECT id,password FROM user WHERE id = '%s'" % (form.username.data))
 		#us = db.executeAll("SELECT * FROM user")
 
