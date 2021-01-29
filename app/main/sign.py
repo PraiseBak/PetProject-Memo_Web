@@ -19,6 +19,7 @@ def sign():
 		if user == 0:
 			id, password = form.username.data, form.password1.data
 			db.execute("""INSERT INTO user (id,password) VALUES ('%s','%s')""" % (form.username.data, form.password1.data))
+			user = db.executeAll("SELECT id,password FROM user WHERE id = '%s'" % (form.username.data))
 			db.commit()
 			return redirect(url_for('main.index'))
 		else:

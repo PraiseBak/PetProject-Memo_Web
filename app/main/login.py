@@ -13,8 +13,15 @@ def login():
 	form = UserLoginForm()
 	if request.method == 'POST' and form.validate_on_submit():
 		error = None
-
+		#db = Database()
+		#db.execute("""INSERT INTO user (id,password) VALUES ('%s','%s')""" % ("응애3","응애4"))
+		#db.commit()
 		user = db.executeAll("SELECT id,password FROM user WHERE id = '%s'" % (form.username.data))
+		#us = db.executeAll("SELECT * FROM user")
+
+		#print("SELECT id,password FROM user WHERE id = '%s'" % (form.username.data))
+		#print(user)
+
 		if len(user) == 0:
 			user = 0
 		else:
@@ -50,6 +57,8 @@ def load_logged_in_user():
 		g.user = None
 		g.idx = None
 	else:
+		#print(user_id)
+		#print("SELECT id,idx FROM user WHERE id = '%s' " % (user_id))
 		g.user = db.executeOne("SELECT id,idx FROM user WHERE id = '%s' " % (user_id))
 		g.idx = g.user['idx']
 		g.user = g.user['id']
