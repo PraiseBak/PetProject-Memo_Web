@@ -13,3 +13,8 @@ class UserLoginForm(FlaskForm):
     username = StringField('사용자이름', validators=[DataRequired(), Length(min=3, max=25)])
     password = PasswordField('비밀번호', validators=[DataRequired()])
 
+
+class UserAddCheck(FlaskForm):
+    checklist_input = StringField('추가할 내용', validators=[DataRequired(), Length(min=1, max=100)])
+    content_idx = StringField('게시판 인덱스')
+

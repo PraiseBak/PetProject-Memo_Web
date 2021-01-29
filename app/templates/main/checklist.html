@@ -1,0 +1,102 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+
+<div id="wrapper" xmlns="http://www.w3.org/1999/html">
+<!-- Banner -->
+    <section id="intro" class="main">
+        <span class="icon fa-diamond major"></span>
+
+        <div class="checklist">
+            <h2>
+                Your CheckList
+            </h2>
+
+            <h3>
+
+                <div class="for_data" style="text-align:left;word-break:break-all;">
+                    {% for idx in range(check_list_data | length) %}
+                    <div class="check_text" style="width=500px"> {{check_list_data[idx]['content']}}</div>
+
+                    <div class="delete_btn" style="width=10%">
+                        <form class="post-form" method='POST'>
+                            {{ form.csrf_token }}
+                            <button type="submit" class="btn btn-primary" name="content_idx" id="content_idx" value="{{check_list_data[idx]['content_idx']}}">삭제</button>
+
+
+                        </form>
+
+                        <!--button onclick="add()" style="float:right;height:30px;border:0;outline:0;">
+                                 <strong style="position:relative;font-size:16px;top:-10px;">삭제</strong></button>
+                                 <br><br>
+                        <-->
+
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+
+            </h3>
+
+                <div class="add_btn">
+                    <button onclick="add()">체크리스트 추가</button>
+
+                </div>
+
+
+                <div class="input_check">
+                    <center>
+                        <br>
+                        <form method="post" class="post-form">
+                            {{ form.csrf_token }}
+					        {% include "checklist_form_errors.html" %}
+                            <label for="checklist_input" id="add_label" style="display:none;">추가할 내용:</label>&nbsp
+                            <input type="text" class="form-control" name="checklist_input" id="checklist_input"
+                           value="{{ form.checklist_input.data or '' }}" style="display:none;,position:relative; left:5px; width:400px;height:40px;font-size:16px;">
+                            &nbsp
+                            <button type="submit" id="submit_btn" class="btn btn-primary" style="position:relative;left:5px;font-size:16px;display:none;height:40px;top:-10px;">
+                                <h5 style="position:relative; top:8px">제출</h5>
+                            </button>
+                        </form>
+                    </center>
+                     </div>
+
+
+                <script language="javascript">
+
+                    function add() {
+                        var obj = document.getElementById("checklist_input");
+                        var obj2 = document.getElementById("add_label");
+                        var obj3 = document.getElementById("submit_btn");
+                        if (obj.style.display=="inline-block"){
+                            obj.style.display="none";
+                            obj2.style.display="none";
+                            obj3.style.display="none";
+                        }
+                        else{
+                            obj.style.display="inline-block";
+                            obj2.style.display="inline-block";
+                            obj3.style.display="inline-block";
+                        }
+                      }
+
+                 </script>
+
+
+
+        </div>
+
+
+    </section>
+
+
+
+
+
+
+</div>
+
+
+
+{% endblock %}

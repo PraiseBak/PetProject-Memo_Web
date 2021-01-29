@@ -1,6 +1,5 @@
 from flask import Blueprint, url_for, render_template, flash, request, session, g
 from werkzeug.utils import redirect
-from app.main.utils import get_ip
 from app.forms.forms import UserLoginForm
 from app.module.dbModule import Database
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -14,13 +13,13 @@ def login():
 	form = UserLoginForm()
 	if request.method == 'POST' and form.validate_on_submit():
 		error = None
+
 		user = db.executeAll("SELECT id,password FROM user WHERE id = '%s'" % (form.username.data))
 		if len(user) == 0:
 			user = 0
 		else:
 			password = user[0]['password']
 			user = user[0]['id']
-
 
 		if user == 0:
 			error = "존재하지 않는 사용자입니다"
@@ -34,14 +33,24 @@ def login():
 			return redirect(url_for('main.index'))
 
 		flash(error)
-	url = get_ip()
-	return render_template('/main/login.html',url=url,form=form)
+
+	return render_template('/main/login.html',form=form)
+
+@login_bp.route('/logout/')
+def logout():
+	session.clear()
+	return redirect(url_for('main.index'))
+
+
 
 @login_bp.before_app_request
 def load_logged_in_user():
 	user_id = session.get('user_id')
 	if user_id is None:
 		g.user = None
+		g.idx = None
 	else:
-		g.user = db.executeOne("SELECT id FROM user WHERE id = '%s' " % (user_id))
-		print(g.user())
+		g.user = db.executeOne("SELECT id,idx FROM user WHERE id = '%s' " % (user_id))
+		g.idx = g.user['idx']
+		g.user = g.user['id']
+

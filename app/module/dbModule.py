@@ -18,7 +18,7 @@ class Database():
 
 	def executeOne(self, query, args={}):
 		self.cursor.execute(query,args)
-		row = self.cursop.fetchone()
+		row = self.cursor.fetchone()
 		return row
 
 	def executeAll(self, query, args={}):
@@ -31,12 +31,11 @@ class Database():
 
 
 if __name__ == "__main__":
-	create_table = """CREATE TABLE user(
-	               idx INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	               id VARCHAR(256) NOT NULL UNIQUE KEY,
-	               password VARCHAR(256) NOT NULL
+	create_table = """CREATE TABLE check_list(
+	               user_idx INT UNSIGNED NOT NULL,
+	               content_idx INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	               content VARCHAR(256) NOT NULL
 	               );"""
-
 	db = Database()
-	print(db.execute(create_table))
+	db.execute(create_table)
 	db.commit()
