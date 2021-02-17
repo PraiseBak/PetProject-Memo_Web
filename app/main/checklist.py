@@ -2,14 +2,14 @@ from flask import Blueprint, request, render_template, flash, redirect, url_for,
 from app.module.dbModule import Database
 from app.forms.forms import UserAddCheck
 
-db = Database()
+
 checklist_bp = Blueprint('checklist',__name__,url_prefix='/')
 
 
 @checklist_bp.route('/checklist',methods=['GET','POST'])
 
 def checklist():
-
+	db = Database()
 	if g.user == None:
 		return redirect(url_for('login.login'))
 	form = UserAddCheck()

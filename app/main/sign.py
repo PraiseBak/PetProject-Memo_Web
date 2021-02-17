@@ -6,14 +6,13 @@ from app.module.dbModule import Database
 from app.forms.forms import UserCreateForm
 from app.module.dbModule import Database
 
-db = Database()
 sign_bp = Blueprint('sign',__name__,url_prefix='/')
 @sign_bp.route('/sign',methods=['GET','POST'])
 
 def sign():
 
 	form = UserCreateForm()
-	global db
+	db = Database()
 	if request.method == 'POST' and	form.validate_on_submit():
 		user = db.execute("SELECT id FROM user WHERE id = '%s'" %(form.username.data))
 		if user == 0:

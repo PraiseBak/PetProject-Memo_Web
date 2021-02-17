@@ -2,7 +2,7 @@ import os
 from flask import Flask
 from app.main.index import main as main
 from app.main.login import login_bp as login_bp
-from app.main.sign import sign_bp as sign_bp, db
+from app.main.sign import sign_bp as sign_bp
 from app.main.checklist import checklist_bp
 
 SECRET_KEY = os.urandom(32)
