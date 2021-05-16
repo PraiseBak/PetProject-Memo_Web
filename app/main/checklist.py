@@ -33,6 +33,4 @@ def checklist():
 		error = "입력데이터는 1자이상 100자 미만이어야 합니다."
 		flash(error)
 
-
-
 	return render_template('/main/checklist.html',form=form,check_list_data=check_list_data)
