@@ -4,7 +4,7 @@ from flask import Blueprint, url_for, render_template, flash, request, session, 
 show_program_list_bp = Blueprint('show_program_list', __name__, url_prefix='/')
 
 
-@show_program_list_bp.route('/show_program_list', methods=['POST'])
+@show_program_list_bp.route('/show_program_list', methods=['POST','GET'])
 
 def show_program_list(data = ''):
 	print("무자식")
