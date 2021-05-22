@@ -2,10 +2,7 @@ from flask import Blueprint, request, render_template, flash, redirect, url_for,
 from app.module.dbModule import Database
 from app.forms.forms import UserAddCheck
 
-
 checklist_bp = Blueprint('checklist',__name__,url_prefix='/')
-
-
 @checklist_bp.route('/checklist',methods=['GET','POST'])
 
 def checklist():
