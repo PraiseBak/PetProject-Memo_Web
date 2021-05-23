@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import os
 
+
 class NetflixCrawl():
 
 	id = ""
@@ -10,12 +11,15 @@ class NetflixCrawl():
 	driver = None
 	hasLogin = False
 
-
-	def __init__(self):
+	def init(self):
 		self.setLoginInfo()
 		self.setDriver()
 		self.driver.implicitly_wait(1)
 		self.netflixLogin()
+
+
+	def __init__(self):
+		pass
 
 	def setLoginInfo(self):
 		self.id = "leehj908@naver.com"
@@ -30,7 +34,7 @@ class NetflixCrawl():
 		self.driver.find_element_by_name("userLoginId").send_keys(self.id)
 		self.driver.find_element_by_name("password").send_keys(self.password)
 		self.driver.find_element_by_xpath('//*[@id="appMountPoint"]/div/div[3]/div/div/div[1]/form/button').click()
-		self.driver.implicitly_wait(3)
+		self.driver.implicitly_wait(1)
 		#넷플릭스 프로필 선택
 		profiles = self.driver.find_elements_by_class_name("profile")
 		a_tag = profiles[1].find_element_by_tag_name("a")
@@ -63,4 +67,18 @@ class NetflixCrawl():
 		self.driver.close()
 		return um
 
+
+
+if __name__ == "__main__":
+
+	test = []
+	print(len(test))
+	
+	"""
+	test = NetflixCrawl()
+	test.init()
+	
+
+	imgs = test.netflixSearch("브레이킹 배드")
+	"""
 

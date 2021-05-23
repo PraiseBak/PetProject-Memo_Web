@@ -1,7 +1,6 @@
 import os
-from app.main.NetFlixCrawlSelenium import *
+from app.main.NetflixCrawlSelenium import *
 crawl = NetflixCrawl()
-crawl.netflixLogin()
 from flask import Flask
 from app.main.index import main as main
 from app.main.login import login_bp as login_bp

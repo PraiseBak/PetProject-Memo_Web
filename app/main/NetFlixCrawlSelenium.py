@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 import os
 
 class NetflixCrawl():
@@ -7,21 +8,20 @@ class NetflixCrawl():
 	password = ""
 	driverPath = ""
 	driver = None
+	hasLogin = False
+
 
 	def __init__(self):
 		self.setLoginInfo()
 		self.setDriver()
+		self.netflixLogin()
 
 	def setLoginInfo(self):
 		self.id = "leehj908@naver.com"
 		self.password = "89088leeppuya"
 
 	def setDriver(self):
-		options = webdriver.ChromeOptions()
-		#options.add_argument('headless')
-		#options.add_argument('window-size=1920x1080')
-		#options.add_argument("disable-gpu")
-		self.driver = webdriver.Chrome('chromedriver', chrome_options=options)
+		self.driver = webdriver.Chrome('./chromedriver.exe')
 
 	#로그인
 	def netflixLogin(self):
@@ -38,7 +38,6 @@ class NetflixCrawl():
 
 	def getImgUrlList(self,images = None):
 		limit = 30
-
 		if images == None:
 			return
 
@@ -52,19 +51,15 @@ class NetflixCrawl():
 			count += 1
 		return urlList
 
-
-
 	def netflixSearch(self,searchText = ""):
 		self.driver.get("https://www.netflix.com/search?q=%s" %searchText)
 		images = self.driver.find_elements_by_class_name("boxart-image")
-		print("엄춘식")
 		return self.getImgUrlList(images)
-
 
 	def testNetflixCrawl(self):
 		self.netflixLogin()
-		imgs = self.netflixSearch("브레이킹 배드")
-		for img in imgs:
-			print(img)
+		um = self.netflixSearch("브레이킹 배드")
 		self.driver.close()
+		return um
+
 
