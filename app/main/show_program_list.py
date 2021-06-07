@@ -10,7 +10,11 @@ def show_program_list(data = []):
 	data = request.args.get('search')
 	if data != None:
 		from app.__init__ import crawl
-		url = crawl.netflixSearch(data)
+		url = []
+		url.append("https://github.com/PraiseBak/PetProject-Memo_Web/blob/master/app/images/add_search.PNG?raw=true")
+		url.append("https://github.com/PraiseBak/PetProject-Memo_Web/blob/master/app/images/check_list.PNG?raw=true")
+
+		#url = crawl.netflixSearch(data)
 		data = url
 
 	if data == None:
