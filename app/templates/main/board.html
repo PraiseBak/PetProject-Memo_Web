@@ -1,0 +1,42 @@
+{% extends 'main/clone_base.html' %}
+{% block content %}
+
+<html>
+    <body>
+        <div class="container my-3">
+            <table class="table">
+                <thead>
+                <tr class="thead-dark">
+                    <th>번호</th>
+                    <th>내용</th>
+                    <!--th>작성일시</th!-->
+                </tr>
+                </thead>
+                <tbody>
+                {% if content_list %}
+                {% for content in content_list %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>
+                        {{ content['board_content'] }}
+
+                </tr>
+
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="3">너에게 받은만큼 더 행복해질거야</td>
+                </tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+    </body>
+</html>
+
+
+
+
+
+{% endblock %}

@@ -1,10 +1,52 @@
 
 <!DOCTYPE HTML>
-    <html>
-        <title>MemWInside</title>
+<html>
+    <head>
+        <title>ppippi Inside</title>
         <meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="stylesheet" href="/static/css/main.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="/static/css/main.css" />
+    </head>
 
-        
-	</head>
+
+
+
+    <body>
+        <!-- Header -->
+        <header id="header" class="alt">
+            <div class="inner">
+
+                <h1>ppippi Inside</h1>
+                <p>
+                    see you chic 삐삐<br>
+                    click to go <a href="/main">home</a>
+                    <br>
+                    <br>
+                    <style>
+			            div { text-align: center; }
+
+		            </style>
+                    
+                    <img src="{{ url_for('static', filename='img/MyBestFriend.jpg') }}" style="max-width: 30%; height: auto;">
+                </p>
+
+        </header>
+
+
+        {% block content %}
+
+        {% endblock %}
+
+            <!-- Footer -->
+            <footer id="footer">
+                <p class="copyright">&copy; Untitled. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a href="https://unsplash.com">Unsplash</a>.</p>
+            </footer>
+
+            <!-- Scripts -->
+			<script src="/static/js/jquery.min.js"></script>
+			<script src="/static/js/skel.min.js"></script>
+			<script src="/static/js/util.js"></script>
+			<script src="/static/js/main.js"></script>
+    </body>
+            
+</html>

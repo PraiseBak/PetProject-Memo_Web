@@ -31,11 +31,32 @@ class Database():
 
 
 if __name__ == "__main__":
-	create_table = """CREATE TABLE check_list(
+    
+
+	create_check_list_table = """CREATE TABLE check_list(
 	               user_idx INT UNSIGNED NOT NULL,
 	               content_idx INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	               content VARCHAR(256) NOT NULL
 	               );"""
+
+	create_user_table = """CREATE TABLE user(
+					id VARCHAR(256) NOT NULL,
+					password VARCHAR(256) NOT NULL,
+					idx INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY
+					);"""
+
+	create_board_manage_table = """CREATE TABLE board_manage(
+		board_name VARCHAR(256) NOT NULL,
+		board_idx INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY
+	);"""
+
+	create_board_content_table = """CREATE TABLE board_content_table(
+		board_content VARCHAR(256) NOT NULL,
+		board_content_idx int UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY
+	);"""
+	
+		
 	db = Database()
-	db.execute(create_table)
+	#db.execute(create_board_content_table)
+	db.execute("""INSERT INTO board_content_table (board_content) VALUES ("너에게 받은만큼 더 행복해질게")""")
 	db.commit()

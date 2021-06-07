@@ -1,5 +1,4 @@
 from flask import Blueprint, request,url_for, render_template, flash, request, session, g
-import app.um
 
 show_program_list_bp = Blueprint('show_program_list', __name__, url_prefix='/')
 @show_program_list_bp.route('/show_program_list', methods=['GET','POST'])
