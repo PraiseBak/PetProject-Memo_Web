@@ -8,28 +8,42 @@
                 <thead>
                 <tr class="thead-dark">
                     <th>번호</th>
-                    <th>내용</th>
-                    <!--th>작성일시</th!-->
+                    <th>제목</th>
+                    <th>작성일시</th>
+
                 </tr>
                 </thead>
                 <tbody>
                 {% if content_list %}
                 {% for content in content_list %}
                 <tr>
-                    <td>{{ loop.index }}</td>
+                    <td>{{ content['board_content_idx'] }}</td>
                     <td>
                         {{ content['board_content'] }}
+                    </td>
+                    <td>{{ content['write_time'] }}</td>
 
                 </tr>
 
                 {% endfor %}
                 {% else %}
                 <tr>
-                    <td colspan="3">너에게 받은만큼 더 행복해질거야</td>
+                    <td colspan="3">너에게 받은만큼 더 행복해질게</td>
                 </tr>
                 {% endif %}
+                <br>
                 </tbody>
             </table>
+            <div class="btns">
+                <li><a href="/clone_board/add" class="button big">글쓰기</a></li>
+            </div>
+
+
+            <style>
+                .btns{
+                    list-style: none;
+                }
+            </style>
         </div>
 
     </body>

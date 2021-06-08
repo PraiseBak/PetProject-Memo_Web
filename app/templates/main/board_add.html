@@ -1,0 +1,39 @@
+{% extends 'main/clone_base.html' %}
+{% block content %}
+
+<html>
+    <body>
+        <div class="container my-3">
+            <form method="post" class="post-form">
+                {{ form.csrf_token }}
+                {% include "checklist_form_errors.html" %}
+                Title:&nbsp
+                <input type="content_title" class="form-control" name="content_title" id="content_title">
+                    
+                <form action="{{ url_for('clone_board.add') }}" method="post">
+                    
+                    <label for="content_text" style="font-size:16px;" >Content:</label>
+                    <textarea name="content_text" id="content_text" rows="15"></textarea>
+                    <input type="submit" style="font-size:16px;" value="등록">
+
+                </form>
+            </form>
+            <style>
+                .post-form{
+                    position:relative;
+                    font-size:14px;
+                    text-align:left;
+                }
+            </style>
+
+
+            
+        </div>
+
+    </body>
+    <br>
+</html>
+
+
+
+{% endblock %}

@@ -18,3 +18,6 @@ class UserAddCheck(FlaskForm):
     checklist_input = StringField('추가할 내용', validators=[DataRequired(), Length(min=1, max=100)])
     content_idx = StringField('게시판 인덱스')
 
+class ContentAddForm(FlaskForm):
+    content_title = StringField('제목', validators=[DataRequired(), Length(min=1, max=30)])
+    content_text = StringField('', validators=[DataRequired(), Length(min=1, max=100)])
