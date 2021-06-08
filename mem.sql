@@ -16,6 +16,14 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Current Database: `mem_web`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `mem_web` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+USE `mem_web`;
+
+--
 -- Table structure for table `board_content_table`
 --
 
@@ -25,8 +33,10 @@ DROP TABLE IF EXISTS `board_content_table`;
 CREATE TABLE `board_content_table` (
   `board_content` varchar(256) NOT NULL,
   `board_content_idx` int unsigned NOT NULL AUTO_INCREMENT,
+  `write_time` datetime DEFAULT NULL,
+  `board_content_title` varchar(256) NOT NULL,
   PRIMARY KEY (`board_content_idx`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,7 +45,7 @@ CREATE TABLE `board_content_table` (
 
 LOCK TABLES `board_content_table` WRITE;
 /*!40000 ALTER TABLE `board_content_table` DISABLE KEYS */;
-INSERT INTO `board_content_table` VALUES ('테스트입니다',1),('너에게 받은만큼 더 행복해질게',2);
+INSERT INTO `board_content_table` VALUES ('테스트입니다',1,NULL,''),('너에게 받은만큼 더 행복해질게',2,NULL,''),('gg',3,NULL,'gg'),('dd',4,'2021-06-09 04:45:26','dd');
 /*!40000 ALTER TABLE `board_content_table` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -74,7 +84,7 @@ CREATE TABLE `check_list` (
   `content_idx` int unsigned NOT NULL AUTO_INCREMENT,
   `content` varchar(256) NOT NULL,
   PRIMARY KEY (`content_idx`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,7 +108,7 @@ CREATE TABLE `user` (
   `password` varchar(256) NOT NULL,
   `idx` int unsigned NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`idx`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -107,6 +117,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES ('praisebak','Pcy3062!',1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -119,4 +130,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-06-08  2:01:40
+-- Dump completed on 2021-06-09  5:25:55
