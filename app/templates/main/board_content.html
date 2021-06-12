@@ -5,47 +5,58 @@
     <body>
         <div class="container my-3">
             <header>
-                <h3 class="title">
-                    <span class="title_text" style=float:left;> &nbsp Title: {{ content[0]['board_content_title'] }}
-                    </span>
+                <div class= "upside">
+
+                    <h3 class="title">
+                        <span class="title_text" style=float:left;> &nbsp Title: {{ content[0]['board_content_title'] }}
+                        </span>
+
+                        <style>
+                            .title_text
+                            {
+                                text-transform: none;
+                            }
+                            
+                        </style>
+                        
+                    </h3>
+
+                    <div class="btns">
+                        <div class="modify">  
+                            <a href="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'])}}" 
+                                class="button">수정</a>
+                        </div>
+                        <div class="delete">  
+                            <a href="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx']) }}"
+                                class="button"> 삭제 </a>
+                        </div>
+                    </div>
+
                     <style>
-                        .title_text
-                        {
-                            text-transform: none;
+                        .modify{
+                            list-style: none;
+                            float: right;
+                            margin-right:20px;
+                            box-sizing: border-box;
+                        }
+                        .delete{
+                            list-style: none;
+                            float: right;
+                            margin-right:10px;
+                            box-sizing: border-box;
+                        }
+                        .container{
+                            list-style: none;
+                        }
+                        .upside{
+                            border-bottom: 2px solid #bcbcbc; 
+                            height: 65px;
                         }
                     </style>
-                    
-                </h3>
-
-                <div class="modify">
-                    <li><a href="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'])}}" class="button">수정</a></li>
-                </div>
-
-                <div>
-                    <a href="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx']) }}"
-                        class="button"> 삭제 </a>
-
-                </div>
-                <style>
-                    .modify{
-                        list-style: none;
-                        float: right;
-                        margin-right: 5%;
-                        box-sizing: border-box;
-                    }
-                    .delete{
-                        list-style: none;
-                        float: right;
-                        margin-right: 2%;
-                        box-sizing: border-box;
-                    }
-                    .container{
-                        list-style: none;
-                    }
-                </style>
-                
                 
             </header>
+
+            
             <br>
             <br>
             <div class="write_div" style="float:left;">

@@ -24,7 +24,7 @@ def add():
         flash(error)
     elif request.method == 'POST' and not((title == "") or (text == "")):
         db = Database()
-        db.execute("""INSERT INTO board_content_table (board_content,board_content_title,write_time) VALUES ('%s','%s','%s')""" % (text, title,datetime.now())) 
+        db.execute("""INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password) VALUES ('%s','%s','%s','%s','%s')""" % (text, title,datetime.now(),"test","test")) 
         db.commit()
         return redirect(url_for("clone_board.list"))
         
@@ -41,6 +41,9 @@ def content(board_content_idx):
 def delContent(board_content_idx):
     db = Database()
     db.execute("""DELETE FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
+    db.execute("""SET @CNT = 0;""")
+    db.execute("""UPDATE board_content_table SET board_content_table.board_content_idx = @CNT:=@CNT+1;""")
+    db.execute("""ALTER TABLE board_content_table AUTO_INCREMENT=1;""")
     db.commit()
     return redirect(url_for("clone_board.list"))
 
