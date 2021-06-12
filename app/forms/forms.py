@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, PasswordField
-from wtforms.fields.html5 import EmailField
+from wtforms import StringField, TextAreaField, PasswordField, BooleanField
+from wtforms.fields.html5 import EmailField, IntegerField
 from wtforms.validators import DataRequired, Length, EqualTo, Email
 
 class UserCreateForm(FlaskForm):
@@ -19,7 +19,8 @@ class UserAddCheck(FlaskForm):
     content_idx = StringField('게시판 인덱스')
 
 class ContentAddForm(FlaskForm):
-    content_title = StringField('제목', validators=[DataRequired(), Length(min=1, max=30)])
+    content_title = StringField('제목', validators=[DataRequired(), Length(min=2, max=30)])
     content_text = StringField('', validators=[DataRequired(), Length(min=1, max=100)])
-    username = StringField('사용자이름', validators=[DataRequired(), Length(min=3, max=25)])
-    password = PasswordField('비밀번호', validators=[DataRequired()])
+    username = StringField('사용자이름', validators=[DataRequired(), Length(min=2, max=25)])
+    password = PasswordField('비밀번호', validators=[DataRequired(),Length(min=4, max=24)])
+    modify = BooleanField('')

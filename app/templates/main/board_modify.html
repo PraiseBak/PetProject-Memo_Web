@@ -7,20 +7,13 @@
             <form method="post" class="post-form">
                 {{ form.csrf_token }}
                 {% include "checklist_form_errors.html" %}
-                    {% if form.data.modify or error%}
-                        <input type="username" class="form-control" name="username" id="username" value={{ form.data.username or ''}} readonly/ >
-                        <input type="password" class="form-control" name="password" id="password" style="width:200px;"
-                        value={{ form.data.password or ''}} readonly/ > 
-                        <input type="content_title" class="form-control" name="content_title" id="content_title" value={{ form.data.content_title or ''}}>
-                    {% else %}
-                        <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" value={{ form.data.username or ''}}> <br>
-                        <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
-                        class="form-control" name="password" id="password" style="width:185px;" value={{ form.data.password or ''}}> 
-                        <input type="content_title"  placeholder="제목을 입력해주세요." class="form-control" name="content_title"
-                            id="content_title" value={{ form.data.content_title or ''}}>
-                    {% endif %}
-                        
+                    {{form.data.username}}
+                    <input type="username" class="form-control" name="username" id="username" value={{ form.data.username or ''}} disabled/>
+                    <input type="password" class="form-control" name="password" id="password" style="width:200px;"
+                    value={{ form.data.password or ''}} readonly/>
                     
+                    <input type="content_title" class="form-control" name="content_title" id="content_title" value={{ form.data.content_title or ''}}>
+
                     <style>
                         .inputs{
                             font-size:14px;
@@ -28,7 +21,6 @@
                             float:left;
                         }
                     </style>
-
 
                 <form action="{{ url_for('clone_board.list',board_content_idx=board_content_idx) if form.data.content_text else url_for('clone_board.list') }}" method="post">
                     <label for="content_text" style="font-size:16px;"></label>
@@ -52,8 +44,5 @@
     </body>
     <br>
 </html>
-
-
-
-
 {% endblock %}
+

@@ -2,9 +2,12 @@
 {% block content %}
 
 <html>
+                
     <body>
+
         <div class="container my-3">
             <header>
+            
                 <div class= "upside">
 
                     <h3 class="title">
@@ -16,21 +19,24 @@
                             {
                                 text-transform: none;
                             }
-                            
                         </style>
                         
                     </h3>
 
                     <div class="btns">
                         <div class="modify">  
-                            <a href="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'])}}" 
-                                class="button">수정</a>
+                            <a href="#" data-uri="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'])}}" 
+                                class="button" id="modifyBtn">수정</a>
                         </div>
                         <div class="delete">  
-                            <a href="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx']) }}"
-                                class="button"> 삭제 </a>
+                            <a href="#" data-uri="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx']) }}"
+                                class="button" id="deleteBtn"> 삭제 </a>
                         </div>
                     </div>
+
+                    
+                    
+
 
                     <style>
                         .modify{
@@ -69,6 +75,40 @@
     <br>
 </html>
 
+{% endblock %}
 
+
+{% block script %}
+
+
+<script type='text/javascript'>
+$(document).ready(function(){
+    $("#deleteBtn").on('click', function() {  // 클래스값이 delete인 엘리먼트가 눌리면?
+        var result = prompt("비밀번호를 입력하세요");
+        if(result != "{{content[0]['content_password']}}")
+        {
+            alert("비밀번호가 틀렸습니다");
+            location.href = location.href;
+        }
+        else
+        {
+            location.href = $(this).data('uri');  // data-uri 속성값으로 URL 호출
+        }
+    });
+
+    $("#modifyBtn").on('click', function() {  // 클래스값이 delete인 엘리먼트가 눌리면?
+        var result = prompt("비밀번호를 입력하세요");
+        if(result != "{{content[0]['content_password']}}")
+        {
+            alert("비밀번호가 틀렸습니다");
+            location.href = location.href;
+        }
+        else
+        {
+            location.href = $(this).data('uri');  // data-uri 속성값으로 URL 호출
+        }
+    });
+});
+</script>
 
 {% endblock %}

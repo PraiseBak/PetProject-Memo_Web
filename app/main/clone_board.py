@@ -19,17 +19,18 @@ def add():
     form = ContentAddForm()
     title = form.content_title.data
     text = form.content_text.data
-    if request.method == 'POST' and not form.validate_on_submit() and ((title == "") or (text == "")):
+    username = form.username.data
+    password = form.password.data
+
+    if request.method == 'POST' and not form.validate_on_submit():
         error = "데이터 양식이 맞지 않습니다"
         flash(error)
-    elif request.method == 'POST' and not((title == "") or (text == "")):
+    elif request.method == 'POST':
         db = Database()
-        db.execute("""INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password) VALUES ('%s','%s','%s','%s','%s')""" % (text, title,datetime.now(),"test","test")) 
+        db.execute("""INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password) VALUES ('%s','%s','%s','%s','%s')""" % (text, title,datetime.now(),username,password)) 
         db.commit()
         return redirect(url_for("clone_board.list"))
-        
-
-    return render_template('/main/board_add.html',form=form)
+    return render_template('/main/board_add.html',form=form,modify=0)
 
 @clone_board_bp.route('/list/<int:board_content_idx>/')
 def content(board_content_idx):
@@ -52,13 +53,33 @@ def delContent(board_content_idx):
 def modify(board_content_idx):
     db = Database()
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
-
+    error = None
     if request.method == 'POST':
         form = ContentAddForm()
         if form.validate_on_submit():
             db.execute("""UPDATE board_content_table SET write_time='%s',board_content_title='%s',board_content='%s' WHERE board_content_idx = '%s'""" % (datetime.now(),form.content_title.data,form.content_text.data,str(data[0]['board_content_idx']) ))
             db.commit() 
             return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
+        else:
+            error = "수정 데이터 양식이 맞지 않습니다"
+            flash(error)
+            return render_template('/main/board_add.html',form=form,board_content_idx=board_content_idx,error=error)
     else:
-        form = ContentAddForm(content_title=data[0]['board_content_title'],content_text=data[0]['board_content'])
-    return render_template('/main/board_add.html',form=form,board_content_idx=board_content_idx)
+        content_title = data[0]['board_content_title']
+        content_text = data[0]['board_content']
+        username = data[0]['write_user_name']
+        password = data[0]['content_password']
+        form = ContentAddForm(content_title=content_title,content_text=content_text,username=username,password=password,modify=True)
+    return render_template('/main/board_add.html',form=form,board_content_idx=board_content_idx,error=error)
+
+
+
+    """
+    <!--div class = "inputs">
+                            <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" value={{ form.data.username or ''}}> <br>
+                            <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
+                            class="form-control" name="password" id="password" style="width:185px;" value={{ form.data.password or ''}}> 
+                            <input type="content_title"  placeholder="제목을 입력해주세요." class="form-control" name="content_title"
+                                id="content_title" value={{ form.data.content_title or ''}}>
+                    {% endif %-->}
+                """
