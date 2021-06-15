@@ -6,8 +6,9 @@
     <body>
 
         <div class="container my-3">
-            <header>
             
+            <header>
+
                 <div class= "upside">
 
                     <h3 class="title">
@@ -71,18 +72,34 @@
 
 
             <br><br><br><br>
-            
-            <hr>
-            <div class="content_area">
-                <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" value={{ form.data.username or ''}}> <br>
-                <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
-                    class="form-control" name="password" id="password" style="width:185px;" value={{ form.data.password or ''}}>
-                <form action="{{ url_for('clone_board.content',board_content_idx=board_content_idx) }}" method="post">
-                    <label for="content_text" style="font-size:16px;"></label>
-                    <textarea name="content_text" id="content_text" rows="4">{{form.data.content_text or ''}}</textarea>
-                    <input type="submit" style="font-size:16px;" value="등록">
-                </form>
+            {% for field, errors in form.errors.items() %}
+            <div class="alert alert-danger" role="alert">
+                <strong>{{ form[field].label }}</strong>: {{ ', '.join(errors) }}
             </div>
+            {% endfor %}
+            <!-- flash 오류 -->
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+
+
+            <hr>
+            <form method="post" class="post-form">
+                {{ form.csrf_token }}
+                <div class="content_area">
+                    <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" > <br>
+                    <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
+                        class="form-control" name="password" id="password" style="width:185px;">
+                    <form action="{{ url_for('clone_board.content',board_content_idx=board_content_idx) }}" method="post">
+                        {{ form.csrf_token }}
+                        <label for="content_text" style="font-size:16px;"></label>
+                        <textarea name="content_text" id="content_text" rows="4"></textarea>
+                        <input type="submit" style="font-size:16px;" value="등록">
+                    </form>
+                </div>
+            </form>
 
 
             <style>
@@ -90,6 +107,25 @@
                     text-align:left;
                 }
             </style>
+            <table class="table">
+                <tbody> 
+                    {%for comment in comment_data %}
+                        <tr>
+                            <td style = "cursor:pointer;" >
+                            {{ comment['username'] }}
+                            </td>
+                        <td style = "cursor:pointer;" >
+                            {{ comment['comment'] }}
+                            </td>
+                            <td style = "cursor:pointer;" >
+                            {{ comment['write_time'] }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+
 
 
 

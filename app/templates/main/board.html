@@ -15,29 +15,29 @@
                 </thead>
 
                 <tbody>
-                {% if content_list %}
-                {% for content in content_list %}
-                <tr>
-                    <td style = "cursor:pointer;" onClick = "location.href='/clone_board/list/{{content['board_content_idx']}}'">
-                    {{ content['board_content_idx'] }}
-                    </td>
-                   <td style = "cursor:pointer;" onClick = "location.href='/clone_board/list/{{content['board_content_idx']}}'">
-                    {{ content['board_content_title'] }}
-                    </td>
-                    <td style = "cursor:pointer;" onClick = "location.href='/clone_board/list/{{content['board_content_idx']}}'">
-                    {{ content['write_time'] }}
-                    </td>
-                    <td style = "cursor:pointer;" onClick = "location.href='/clone_board/list/{{content['board_content_idx']}}'">
-                    {{ content['write_user_name'] }}
-                </tr>
+                    {% if content_list %}
+                        {% for content in content_list %}
+                        <tr>
+                            <td style = "cursor:pointer;" onClick = "location.href='/clone_board/list/{{content['board_content_idx']}}'">
+                            {{ content['board_content_idx'] }}
+                            </td>
+                        <td style = "cursor:pointer;" onClick = "location.href='/clone_board/list/{{content['board_content_idx']}}'">
+                            {{ content['board_content_title'] }}
+                            </td>
+                            <td style = "cursor:pointer;" onClick = "location.href='/clone_board/list/{{content['board_content_idx']}}'">
+                            {{ content['write_time'] }}
+                            </td>
+                            <td style = "cursor:pointer;" onClick = "location.href='/clone_board/list/{{content['board_content_idx']}}'">
+                            {{ content['write_user_name'] }}
+                        </tr>
 
-                {% endfor %}
-                {% else %}
-                <tr>
-                    <td colspan="3">너에게 받은만큼 더 행복해질게</td>
-                </tr>
-                {% endif %}
-                <br>
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="3">너에게 받은만큼 더 행복해질게</td>
+                    </tr>
+                    {% endif %}
+                    <br>
                 </tbody>
             </table>
             <div class="btns">

@@ -24,3 +24,8 @@ class ContentAddForm(FlaskForm):
     username = StringField('사용자이름', validators=[DataRequired(), Length(min=2, max=25)])
     password = PasswordField('비밀번호', validators=[DataRequired(),Length(min=4, max=24)])
     modify = BooleanField('')
+
+class CommentAddForm(FlaskForm):
+    content_text = StringField('', validators=[DataRequired(), Length(min=1, max=100)])
+    username = StringField('사용자이름', validators=[DataRequired(), Length(min=2, max=25)])
+    password = PasswordField('비밀번호', validators=[DataRequired(),Length(min=4, max=24)])

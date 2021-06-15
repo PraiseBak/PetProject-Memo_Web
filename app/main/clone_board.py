@@ -2,7 +2,7 @@ from threading import main_thread
 from flask import Blueprint, request, render_template, flash, redirect, url_for, g,session
 from pymysql import NULL
 from app.module.dbModule import Database
-from app.forms.forms import ContentAddForm, UserAddCheck
+from app.forms.forms import CommentAddForm, ContentAddForm, UserAddCheck
 from datetime import datetime
 
 clone_board_bp = Blueprint('clone_board',__name__,url_prefix='/clone_board')
@@ -35,17 +35,21 @@ def add():
 @clone_board_bp.route('/list/<int:board_content_idx>/',methods=['POST','GET'])
 def content(board_content_idx):
     db = Database()
-    form = ContentAddForm()
-    if request.method == 'POST':
+    form = CommentAddForm()
+    data = None
+    comment = None
+    if request.method == 'POST' and form.validate_on_submit():
+        
         username = form.username.data
         password = form.password.data
         comment = form.content_text.data
-        db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time) VALUES ('%s','%s','%s','%s')""" % (comment, username,password,datetime.now())) 
-        return redirect(url_for("clone_board.content",board_content_idx=board_content_idx))
-    else:
-        data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
-        
-    return render_template('/main/board_content.html',content=data,form=form,board_content_idx=board_content_idx)
+        db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx) VALUES ('%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx)) 
+        db.commit()
+    
+    data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
+    comment = db.executeAll("""SELECT * FROM comment_table WHERE board_idx = %s""" %str(board_content_idx))
+    print(comment)
+    return render_template('/main/board_content.html',content=data,form=form,board_content_idx=board_content_idx,comment_data=comment)
 
 @clone_board_bp.route('/del/<int:board_content_idx>/')
 def delContent(board_content_idx):
@@ -82,13 +86,3 @@ def modify(board_content_idx):
     return render_template('/main/board_add.html',form=form,board_content_idx=board_content_idx,error=error)
 
 
-
-    """
-    <!--div class = "inputs">
-                            <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" value={{ form.data.username or ''}}> <br>
-                            <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
-                            class="form-control" name="password" id="password" style="width:185px;" value={{ form.data.password or ''}}> 
-                            <input type="content_title"  placeholder="제목을 입력해주세요." class="form-control" name="content_title"
-                                id="content_title" value={{ form.data.content_title or ''}}>
-                    {% endif %-->}
-                """
