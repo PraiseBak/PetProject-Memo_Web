@@ -9,8 +9,8 @@
                     <tr class="thead-dark">
                         <th>번호</th>
                         <th>제목</th>
-                        <th>작성일시</th>
                         <th>작성자</th>
+                        <th>작성일시</th>
                     </tr>
                 </thead>
 
@@ -25,10 +25,12 @@
                             {{ content['board_content_title'] }}
                             </td>
                             <td style = "cursor:pointer;" onClick = "location.href='/clone_board/list/{{content['board_content_idx']}}'">
+                            {{ content['write_user_name'] }}
+                            </td>
+                            <td style = "cursor:pointer;" onClick = "location.href='/clo    ne_board/list/{{content['board_content_idx']}}'">
                             {{ content['write_time'] }}
                             </td>
-                            <td style = "cursor:pointer;" onClick = "location.href='/clone_board/list/{{content['board_content_idx']}}'">
-                            {{ content['write_user_name'] }}
+                            
                         </tr>
 
                         {% endfor %}

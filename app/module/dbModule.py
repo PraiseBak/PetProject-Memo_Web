@@ -33,49 +33,12 @@ class Database():
 if __name__ == "__main__":
     
 
-<<<<<<< HEAD
-	password_column_add_sql = """ALTER TABLE board_content_table add content_password varchar(256) NOT NULL""";
-	user_name_column_add_sql = """ALTER TABLE board_content_table add write_user_name varchar(256) NOT NULL""";
-	content_comment_add_sql = """ALTER TABLE board_content_table drop column content_comment""";
-	comment_table_add_sql = """ CREATE TABLE comment_table(
-							user_name VARCHAR(256) NOT NULL,
-							password VARCHAR(256) NOT NULL,
-							comment VARCHAR(256) NOT NULL,
-							board_idx INT UNSIGNED
-							);"""
-	
-	create_check_list_table = """CREATE TABLE check_list(
-	               user_idx INT UNSIGNED NOT NULL,
-	               content_idx INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	               content VARCHAR(256) NOT NULL
-	               );"""
-
-	create_user_table = """CREATE TABLE user(
-					id VARCHAR(256) NOT NULL,
-					password VARCHAR(256) NOT NULL,
-					idx INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY
-					);"""
-
-	create_board_manage_table = """CREATE TABLE board_manage(
-		board_name VARCHAR(256) NOT NULL,
-		board_idx INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY
-	);"""
-
-	create_board_content_table = """CREATE TABLE board_content_table(
-		board_content VARCHAR(256) NOT NULL,
-		board_content_idx int UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY
-	);"""
-	
-		
-	db = Database()
-	db.execute(comment_table_add_sql)
-	db.commit()
-=======
    password_column_add_sql = """ALTER TABLE board_content_table add content_password varchar(256) NOT NULL""";
    user_name_column_add_sql = """ALTER TABLE board_content_table add write_user_name varchar(256) NOT NULL""";
    content_comment_add_sql = """ALTER TABLE board_content_table drop column content_comment""";
    content_name_change_sql = """ALTER TABLE comment_table change user_name username varchar(256) NOT NULL"""
-   write_time_column_add_sql = """ALTER TABLE comment_table add write_time datetime NOT NULL""";
+   column_add_sql = """ALTER TABLE comment_table add comment_idx INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY""";
+   
    comment_table_add_sql = """ CREATE TABLE comment_table(
                      username VARCHAR(256) NOT NULL,
                      password VARCHAR(256) NOT NULL,
@@ -107,6 +70,5 @@ if __name__ == "__main__":
    
       
    db = Database()
-   db.execute(write_time_column_add_sql)
+   db.execute(column_add_sql)
    db.commit()
->>>>>>> 57c50dfe50732deebe58715d17f04398606b8561

@@ -40,35 +40,37 @@ def content(board_content_idx):
     data = None
     comment = None
     if request.method == 'POST' and form.validate_on_submit():
-        
         username = form.username.data
         password = form.password.data
         comment = form.content_text.data
-        db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx) VALUES ('%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx)) 
+        db.executeAll("""INSERT INTO comment_table (comment,user_name,password,write_time,board_idx) VALUES ('%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx)) 
         db.commit()
+        return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
     
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
-<<<<<<< HEAD
-    return render_template('/main/board_content.html',content=data,form=form)
-=======
     comment = db.executeAll("""SELECT * FROM comment_table WHERE board_idx = %s""" %str(board_content_idx))
     print(comment)
     return render_template('/main/board_content.html',content=data,form=form,board_content_idx=board_content_idx,comment_data=comment)
->>>>>>> 57c50dfe50732deebe58715d17f04398606b8561
 
-@clone_board_bp.route('/del/<int:board_content_idx>/')
-def delContent(board_content_idx):
+@clone_board_bp.route('/del/<int:board_content_idx>/<int:password>/')
+def delContent(board_content_idx,password):
     db = Database()
-    db.execute("""DELETE FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
-    db.execute("""SET @CNT = 0;""")
-    db.execute("""UPDATE board_content_table SET board_content_table.board_content_idx = @CNT:=@CNT+1;""")
-    db.execute("""ALTER TABLE board_content_table AUTO_INCREMENT=1;""")
-    db.commit()
+    ansPassword = db.executeAll("""SELECT content_password FROM board_content_table WHERE board_content_idx = %s"""%str(board_content_idx))[0]['content_password']
+    if ansPassword == str(password):
+        db.execute("""DELETE FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
+        db.execute("""SET @CNT = 0;""")
+        db.execute("""UPDATE board_content_table SET board_content_table.board_content_idx = @CNT:=@CNT+1;""")
+        db.execute("""ALTER TABLE board_content_table AUTO_INCREMENT=1;""")
+        db.commit()
+    else:
+        flash("wrong password")
+        return redirect(url_for("clone_board.content",board_content_idx=board_content_idx)) 
+    
     return redirect(url_for("clone_board.list"))
 
     
-@clone_board_bp.route('/modify/<int:board_content_idx>/',methods=['POST','GET'])
-def modify(board_content_idx):
+@clone_board_bp.route('/modify/<int:board_content_idx>/<int:password>',methods=['POST','GET'])
+def modify(board_content_idx,password):
     db = Database()
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
     error = None
@@ -82,16 +84,37 @@ def modify(board_content_idx):
             error = "수정 데이터 양식이 맞지 않습니다"
             flash(error)
             return render_template('/main/board_add.html',form=form,board_content_idx=board_content_idx,error=error)
-    else:
+            
+    elif data[0]['content_password'] == str(password):
+        print("테스트")
         content_title = data[0]['board_content_title']
         content_text = data[0]['board_content']
         username = data[0]['write_user_name']
         password = data[0]['content_password']
         form = ContentAddForm(content_title=content_title,content_text=content_text,username=username,password=password,modify=True)
+    else:
+        flash("wrong password")
+        return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
+        
     return render_template('/main/board_add.html',form=form,board_content_idx=board_content_idx,error=error)
 
 
-<<<<<<< HEAD
+@clone_board_bp.route('/delContent/<int:board_content_idx>/<int:comment_password>')
+def delComment(board_content_idx):
+    db = Database()
+    db.execute("""DELETE FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
+    db.execute("""SET @CNT = 0;""")
+    db.execute("""UPDATE board_content_table SET board_content_table.board_content_idx = @CNT:=@CNT+1;""")
+    db.execute("""ALTER TABLE board_content_table AUTO_INCREMENT=1;""")
+    db.commit()
+    return redirect(url_for("clone_board.list"))
 
-=======
->>>>>>> 57c50dfe50732deebe58715d17f04398606b8561
+
+
+
+@clone_board_bp.route('/modifyContent/<int:board_content_idx>/')
+def modifyComment():
+    pass
+
+
+    
