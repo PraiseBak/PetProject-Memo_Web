@@ -33,6 +33,16 @@ class Database():
 if __name__ == "__main__":
     
 
+	password_column_add_sql = """ALTER TABLE board_content_table add content_password varchar(256) NOT NULL""";
+	user_name_column_add_sql = """ALTER TABLE board_content_table add write_user_name varchar(256) NOT NULL""";
+	content_comment_add_sql = """ALTER TABLE board_content_table drop column content_comment""";
+	comment_table_add_sql = """ CREATE TABLE comment_table(
+							user_name VARCHAR(256) NOT NULL,
+							password VARCHAR(256) NOT NULL,
+							comment VARCHAR(256) NOT NULL,
+							board_idx INT UNSIGNED
+							);"""
+	
 	create_check_list_table = """CREATE TABLE check_list(
 	               user_idx INT UNSIGNED NOT NULL,
 	               content_idx INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -57,6 +67,5 @@ if __name__ == "__main__":
 	
 		
 	db = Database()
-	#db.execute(create_board_content_table)
-	db.execute("""INSERT INTO board_content_table (board_content) VALUES ("너에게 받은만큼 더 행복해질게")""")
+	db.execute(comment_table_add_sql)
 	db.commit()

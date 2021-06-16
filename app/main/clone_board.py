@@ -34,9 +34,10 @@ def add():
 
 @clone_board_bp.route('/list/<int:board_content_idx>/')
 def content(board_content_idx):
+    form = ContentAddForm()
     db = Database()
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
-    return render_template('/main/board_content.html',content=data)
+    return render_template('/main/board_content.html',content=data,form=form)
 
 @clone_board_bp.route('/del/<int:board_content_idx>/')
 def delContent(board_content_idx):
@@ -74,12 +75,3 @@ def modify(board_content_idx):
 
 
 
-    """
-    <!--div class = "inputs">
-                            <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" value={{ form.data.username or ''}}> <br>
-                            <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
-                            class="form-control" name="password" id="password" style="width:185px;" value={{ form.data.password or ''}}> 
-                            <input type="content_title"  placeholder="제목을 입력해주세요." class="form-control" name="content_title"
-                                id="content_title" value={{ form.data.content_title or ''}}>
-                    {% endif %-->}
-                """

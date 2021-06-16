@@ -22,7 +22,9 @@
                         </style>
                         
                     </h3>
+                
 
+            
                     <div class="btns">
                         <div class="modify">  
                             <a href="#" data-uri="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'])}}" 
@@ -33,43 +35,58 @@
                                 class="button" id="deleteBtn"> 삭제 </a>
                         </div>
                     </div>
+                </div>
 
+                <style>
+                    .modify{
+                        list-style: none;
+                        float: right;
+                        margin-right:20px;
+                        box-sizing: border-box;
+                    }
+                    .delete{
+                        list-style: none;
+                        float: right;
+                        margin-right:10px;
+                        box-sizing: border-box;
+                    }
+                    .container{
+                        list-style: none;
+                    }
+                    .upside{
+                        border-bottom: 2px solid #bcbcbc; 
+                        height: 65px;
+
+                    }
                     
-                    
-
-
-                    <style>
-                        .modify{
-                            list-style: none;
-                            float: right;
-                            margin-right:20px;
-                            box-sizing: border-box;
-                        }
-                        .delete{
-                            list-style: none;
-                            float: right;
-                            margin-right:10px;
-                            box-sizing: border-box;
-                        }
-                        .container{
-                            list-style: none;
-                        }
-                        .upside{
-                            border-bottom: 2px solid #bcbcbc; 
-                            height: 65px;
-                        }
-                    </style>
+                    .comment_area{
+                        text-align:left;
+                    }
+                </style>
                 
             </header>
-
-            
             <br>
             <br>
             <div class="write_div" style="float:left;">
                 &nbsp&nbsp&nbsp {{content[0]['board_content']}}
             </div>
             
+            <br>
+            <br>
+            <br>
+            <br>
+        </div> 
+            <hr color= "black">
+
+        
+        <div class="comment_area">
+            <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" value={{ form.data.username or ''}}> <br>
+            <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
+            class="form-control" name="password" id="password" style="width:185px;" value={{ form.data.password or ''}}> 
         </div>
+            
+
+
 
     </body>
     <br>
