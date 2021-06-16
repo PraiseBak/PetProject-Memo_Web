@@ -36,9 +36,6 @@
                     </div>
 
                     
-                    
-
-
                     <style>
                         .modify{
                             list-style: none;
@@ -62,14 +59,12 @@
                     </style>
                 
             </header>
-
             
             <br>
             <br>
             <div class="write_div" style="float:left;">
                 &nbsp&nbsp&nbsp {{content[0]['board_content']}}
             </div>
-
 
             <br><br><br><br>
             {% for field, errors in form.errors.items() %}
@@ -93,7 +88,7 @@
                     <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
                         class="form-control" name="password" id="password" style="width:185px;">
                     <form action="{{ url_for('clone_board.content',board_content_idx=board_content_idx) }}" method="post">
-                        {{ form.csrf_token }}
+                        
                         <label for="content_text" style="font-size:16px;"></label>
                         <textarea name="content_text" id="content_text" rows="4"></textarea>
                         <input type="submit" style="font-size:16px;" value="등록">
