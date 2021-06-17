@@ -9,6 +9,21 @@
             
             <header>
 
+
+
+                {% for field, errors in form.errors.items() %}
+                <div class="alert alert-danger" role="alert">
+                    <strong>{{ form[field].label }}</strong>: {{ ', '.join(errors) }}
+                </div>
+                {% endfor %}
+                <!-- flash 오류 -->
+                {% for message in get_flashed_messages() %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+
+
                 <div class= "upside">
 
                     <h3 class="title">
@@ -23,19 +38,44 @@
                         </style>
                         
                     </h3>
+                
 
+            
                     <div class="btns">
                         <div class="modify">  
-                            <a href="#" data-uri="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'])}}" 
-                                class="button" id="modifyBtn">수정</a>
+                            <a href="#" url="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'],password=-1)}}" 
+                                class="button" id="modifyBtn" onclick="btn_click(this)">수정</a>
                         </div>
                         <div class="delete">  
-                            <a href="#" data-uri="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx']) }}"
-                                class="button" id="deleteBtn"> 삭제 </a>
+                            <a href="#" url="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx'],password=-1) }}"
+                                class="button" id="deleteBtn" onclick=btn_click(this)> 삭제 </a>
                         </div>
                     </div>
+                </div>
 
+                <style>
+                    .modify{
+                        list-style: none;
+                        float: right;
+                        margin-right:20px;
+                        box-sizing: border-box;
+                    }
+                    .delete{
+                        list-style: none;
+                        float: right;
+                        margin-right:10px;
+                        box-sizing: border-box;
+                    }
+                    .container{
+                        list-style: none;
+                    }
+                    .upside{
+                        border-bottom: 2px solid #bcbcbc; 
+                        height: 65px;
+
+                    }
                     
+<<<<<<< HEAD
                     <style>
                         .modify{
                             list-style: none;
@@ -60,29 +100,37 @@
                 
             </header>
             
+=======
+                    .comment_area{
+                        text-align:left;
+                    }
+                </style>
+                
+            </header>
+>>>>>>> eb88bfe2e1e74d81fbcbd8fb0ac84a22c8425276
             <br>
             <br>
             <div class="write_div" style="float:left;">
                 &nbsp&nbsp&nbsp {{content[0]['board_content']}}
             </div>
+            
+            <br>
+            <br>
+            <br>
+            <br>
+        </div> 
+            <hr color= "black">
 
+<<<<<<< HEAD
+=======
+        
+        <div class="comment_area">
+
+>>>>>>> eb88bfe2e1e74d81fbcbd8fb0ac84a22c8425276
             <br><br><br><br>
-            {% for field, errors in form.errors.items() %}
-            <div class="alert alert-danger" role="alert">
-                <strong>{{ form[field].label }}</strong>: {{ ', '.join(errors) }}
-            </div>
-            {% endfor %}
-            <!-- flash 오류 -->
-            {% for message in get_flashed_messages() %}
-            <div class="alert alert-danger" role="alert">
-                {{ message }}
-            </div>
-            {% endfor %}
-
 
             <hr>
             <form method="post" class="post-form">
-                {{ form.csrf_token }}
                 <div class="content_area">
                     <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" > <br>
                     <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
@@ -103,18 +151,43 @@
                 }
             </style>
             <table class="table">
+                <tr class="thead-dark">
+                </tr>   
                 <tbody> 
                     {%for comment in comment_data %}
                         <tr>
                             <td style = "cursor:pointer;" >
-                            {{ comment['username'] }}
+                            {{ comment['user_name'] }}
                             </td>
-                        <td style = "cursor:pointer;" >
+                            <td style = "cursor:pointer;" >
                             {{ comment['comment'] }}
                             </td>
                             <td style = "cursor:pointer;" >
                             {{ comment['write_time'] }}
                             </td>
+                            <td>
+                                <div id="comment_btns">
+                                    <div class=button id="modify_btn" 
+                                        url="{{ url_for('clone_board.modifyComment',board_content_idx=content[0]['board_content_idx'],comment_password=0) }}" onclick='btn_click(this);'>
+                                        수정
+                                    </div>
+                                    
+                                    <div class=button id="del_btn" onclick=btn_click(this) 
+                                        url="{{ url_for('clone_board.delComment',board_content_idx=content[0]['board_content_idx'],comment_password=0)}}">
+                                        삭제
+                                    </div>
+                        
+                                </div>
+
+                                <style>
+                                    #comment_btns{
+                                        text-align:right;
+                                    }
+
+
+                                </style>
+                                
+                            <td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -126,6 +199,9 @@
 
 
         </div>
+            
+
+
 
     </body>
     <br>
@@ -138,21 +214,21 @@
 
 
 <script type='text/javascript'>
-$(document).ready(function(){
-    $("#deleteBtn").on('click', function() {  // 클래스값이 delete인 엘리먼트가 눌리면?
-        var result = prompt("비밀번호를 입력하세요");
-        if(result != "{{content[0]['content_password']}}")
-        {
-            alert("비밀번호가 틀렸습니다");
-            location.href = location.href;
-        }
-        else
-        {
-            location.href = $(this).data('uri');  // data-uri 속성값으로 URL 호출
-        }
-    });
 
-    $("#modifyBtn").on('click', function() {  // 클래스값이 delete인 엘리먼트가 눌리면?
+function btn_click(obj)
+{
+    var result = prompt("비밀번호를 입력하세요");
+    var url = $(obj).attr('url');
+    url = url.replace(-1,result);
+    location.href = url;
+
+}
+
+$(document).ready(function(){
+    function btn_click(str){
+        alert("asdf");
+        //document.write(url[0].innerText);
+        /*
         var result = prompt("비밀번호를 입력하세요");
         if(result != "{{content[0]['content_password']}}")
         {
@@ -161,9 +237,13 @@ $(document).ready(function(){
         }
         else
         {
-            location.href = $(this).data('uri');  // data-uri 속성값으로 URL 호출
+            var url = document.getElementById(str+"_url");
+            document.write("0번째 : " + url[0].innerText);
+            location.href = $(this).data('uri') + content[0]['content_password'];  // data-uri 속성값으로 URL 호출
         }
-    });
+        */
+    }
+
 });
 </script>
 

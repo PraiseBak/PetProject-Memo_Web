@@ -29,11 +29,12 @@
                         }
                     </style>
 
-
+                
                 <form action="{{ url_for('clone_board.list',board_content_idx=board_content_idx) if form.data.content_text else url_for('clone_board.list') }}" method="post">
                     <label for="content_text" style="font-size:16px;"></label>
                     <textarea name="content_text" id="content_text" rows="15">{{form.data.content_text or ''}}</textarea>
                     <input type="submit" style="font-size:16px;" value="등록">
+                    
                 </form>
 
             </form>
