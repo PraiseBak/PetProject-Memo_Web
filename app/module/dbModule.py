@@ -43,7 +43,7 @@ if __name__ == "__main__":
                      username VARCHAR(256) NOT NULL,
                      password VARCHAR(256) NOT NULL,
                      comment VARCHAR(256) NOT NULL,
-                     board_idx INT UNSIGNED
+                     board_idx INT UNSIGNED NOT NULL
                      );"""
    
    create_check_list_table = """CREATE TABLE check_list(
