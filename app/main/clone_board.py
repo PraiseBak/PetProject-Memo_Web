@@ -98,6 +98,7 @@ def modify(board_content_idx,password):
 @clone_board_bp.route('/delContent/<int:board_content_idx>/<string:comment_password>/<int:comment_idx>')
 def delComment(board_content_idx,comment_password,comment_idx):
     ansPassword = db.executeAll("""SELECT password FROM comment_table WHERE board_idx = '%s' """ %str(board_content_idx))[comment_idx-1]['password']
+
     if str(comment_password) == ansPassword:
         db.execute("""DELETE FROM comment_table WHERE comment_idx = '%s' """ %str(comment_idx))
         db.execute("""SET @CNT = 0;""")
@@ -110,6 +111,18 @@ def delComment(board_content_idx,comment_password,comment_idx):
     return redirect(url_for("clone_board.content",board_content_idx=board_content_idx))
 
 
-@clone_board_bp.route('/subCommentAdd/<int:board_content_idx>/<int:parent_comment_idx>')
-def subCommentAdd(board_content_idx,comment_idx):
-    pass
+@clone_board_bp.route('/subCommentAdd/<int:board_content_idx>/<int:parent_comment_idx>',methods=['POST','GET'])
+def subCommentAdd(board_content_idx,parent_comment_idx):
+    form = CommentAddForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            username = form.username.data
+            password = form.password.data
+            comment = form.content_text.data
+            db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,parent_comment_idx) VALUES ('%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,parent_comment_idx)) 
+            db.commit()
+        else:
+            flash("wrong input")
+    return redirect(url_for("clone_board.content",board_content_idx=board_content_idx)) 
+
+    

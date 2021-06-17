@@ -37,8 +37,10 @@ if __name__ == "__main__":
    user_name_column_add_sql = """ALTER TABLE board_content_table add write_user_name varchar(256) NOT NULL""";
    content_comment_add_sql = """ALTER TABLE board_content_table drop column content_comment""";
    content_name_change_sql = """ALTER TABLE comment_table change user_name username varchar(256) NOT NULL"""
-   column_add_sql = """ALTER TABLE comment_table add comment_idx INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY""";
-   
+   column_add_sql = """ALTER TABLE comment_table add parent_comment_idx INT UNSIGNED""";
+
+
+
    comment_table_add_sql = """ CREATE TABLE comment_table(
                      username VARCHAR(256) NOT NULL,
                      password VARCHAR(256) NOT NULL,

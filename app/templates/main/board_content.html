@@ -92,10 +92,12 @@
             <br><br><br><br>
         </div> 
             <hr color= "black">
-
+        
+        
         <div class="comment_area">
             
             <form method="post" class="post-form">
+                {{form.csrf_token}}
                 <div class="content_area">
                     <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" > <br>
                     <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
@@ -120,53 +122,97 @@
                 </tr>   
                 <tbody> 
                     {%for comment in comment_data %}
-                        <tr>
-                            <td style = "cursor:pointer;" onclick=comment_click(this,{{loop.index}}) >
-                                {{ comment['username'] }}
-                            </td>
-                            <td style = "cursor:pointer; word-break:break-all;" onclick=comment_click(this,{{loop.index}}) >
-                                {{ comment['comment'] }}
-                            </td>
-                            
-                            <td style = "cursor:pointer;" onclick=comment_click(this,{{loop.index}}) >
-                                {{ comment['write_time'] }}
-                            </td>
-                            
-                            <td>
-                                <div id="comment_btns">
-                                    <div class=button id="del_btn" idx={{loop.index}} onclick=btn_click(this,{{loop.index}})
-                                        url="{{ url_for('clone_board.delComment',board_content_idx=content[0]['board_content_idx'],comment_password=-1,comment_idx=-1)}}">
-                                        삭제
+                        {%if not comment['parent_comment_idx']%}
+
+                            <tr>
+                                <td style = "cursor:pointer;" onclick=comment_click(this,{{comment['comment_idx']}}) >
+                                    {{ comment['username'] }}
+                                </td>
+                                <td style = "cursor:pointer; word-break:break-all;" onclick=comment_click(this,{{comment['comment_idx']}}) >
+                                    {{ comment['comment'] }}
+                                </td>
+                                
+                                <td style = "cursor:pointer;" onclick=comment_click(this,{{comment['comment_idx']}}) >
+                                    {{ comment['write_time'] }}
+                                </td>
+                                
+                                <td>
+                                    <div id="comment_btns">
+                                        <div class=button id="del_btn" idx={{comment['comment_idx']}} onclick=btn_click(this,{{comment['comment_idx']}})
+                                            url="{{ url_for('clone_board.delComment',board_content_idx=content[0]['board_content_idx'],comment_password=-1,comment_idx=-1)}}">
+                                            삭제
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <style>
-                                #comment_btns{
-                                    text-align:right;
-                                }
-                            </style>
-                        </tr>
+                                </td>
+                                <style>
+                                    #comment_btns{
+                                        text-align:right;
+                                    }
+                                </style>
+                            </tr>
 
-                        <tr>
-                            <div class="content_area" id="comment_area">
-                                <form method="post" class="post-form">
-                                    <td style="border-bottom-style:hidden;  display:none; width:1000px;"  id="comment_userinfo{{comment['comment_idx']}}"> <br>
-                                        
-                                            <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" > 
-                                            <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
-                                                class="form-control" name="password" id="password" style="width:175px; height:32px; display:inline-block;">
+                            <tr>
+                                <form method="post" action="{{ url_for('clone_board.subCommentAdd',
+                                            board_content_idx=board_content_idx,parent_comment_idx=comment['comment_idx'] )}}">
+                                    {{form.csrf_token}}
+                                    <td style="border-bottom-style:hidden;  display:none; width:1000px;" id="comment_userinfo{{comment['comment_idx']}}"> <br>
+                                        <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" > 
+                                        <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
+                                            class="form-control" name="password" id="password" style="width:175px; height:32px; display:inline-block;">
 
-                                            <form action="{{ url_for('clone_board.subCommentAdd',board_content_idx=board_content_idx,parent_comment_idx=comment['comment_idx'] )}}" method="post">
-                                                <label for="content_text" style="font-size:16px;"></label>
-                                                <textarea name="content_text" id="content_text" rows="4"  ></textarea>
-                                                <input type="submit" style="font-size:16px;" value="등록2">
-                                            </form>
+                                        <label for="content_text" style="font-size:16px;"></label>
+                                        <textarea name="content_text" id="content_text" rows="4"  ></textarea>
+                                        <input type="submit" style="font-size:16px;" value="등록">
                                     </td>
 
                                 </form>
-                             </div>
-                        </tr>
+                            </tr>
+
+                        {% for subComment in comment_data %}
+                            {%if comment['comment_idx'] == subComment['parent_comment_idx']%}
+                                <tr style="border: none;">
+                                    
+                                    <td>
+                                        ㄴ &nbsp{{ subComment['username'] }}
+                                    </td>
+                                    <td style = "word-break:break-all;" >
+                                        {{ subComment['comment'] }}
+                                    </td>
+                                    
+                                    <td>
+                                        {{ subComment['write_time'] }}
+                                    </td>
+                                    
+                                    <td>
+                                        <div id="comment_btns">
+                                            <div class=button id="del_btn" idx={{subComment['comment_idx']}} onclick=btn_click(this,{{subComment['comment_idx']}})
+                                                url="{{ url_for('clone_board.delComment',board_content_idx=content[0]['board_content_idx'],comment_password=-1,comment_idx=-1)}}">
+                                                삭제
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <style>
+                                        #comment_btns{
+                                            text-align:right;
+                                        }
+                                        tr:last-child {
+                                            border: none;
+                                        }
+                                    </style>
+                                    
+                                </tr>
+                                
+                                
+                            {% endif %}
+                        {% endfor %}
+
+
+                        
+                        {% endif %}
+                    <tr>
+                    </td>
                     {% endfor %}
+                    
                 </tbody>
             </table>      
                
@@ -220,6 +266,7 @@ function comment_click(obj,idx)
 {
     var comment_userinfo = document.getElementById("comment_userinfo"+idx);
     var comment_body = document.getElementById("comment_body"+idx);
+    alert(comment_userinfo);
     if(comment_userinfo.style.display == "block")
     {
         comment_userinfo.style.display = "none";
