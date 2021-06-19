@@ -50,7 +50,13 @@
                             <a href="#" url="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx'],password=-1) }}"
                                 class="button" id="deleteBtn" onclick=btn_click(this)> 삭제 </a>
                         </div>
+                        <div class="username">
+                        <br><br>
+                        &nbsp &nbsp &nbsp  {{content[0]['write_user_name']}} ({{ip}})
+                        </div>    
                     </div>
+                    
+                    
                 </div>
 
                 <style>
@@ -71,10 +77,12 @@
                     }
                     .upside{
                         border-bottom: 2px solid #bcbcbc; 
-                        height: 65px;
+                        height: 85px;
 
                     }
-                    
+                    .username{
+                        text-align:left;
+                    }
                     .comment_area{
                         text-align:left;
                     }
@@ -265,12 +273,9 @@ function btn_click(obj)
 function comment_click(obj,idx)
 {
     var comment_userinfo = document.getElementById("comment_userinfo"+idx);
-    var comment_body = document.getElementById("comment_body"+idx);
-    alert(comment_userinfo);
     if(comment_userinfo.style.display == "block")
     {
         comment_userinfo.style.display = "none";
-        comment_body.style.display = "none";
     }
     else
     {

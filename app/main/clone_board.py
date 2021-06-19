@@ -42,14 +42,17 @@ def content(board_content_idx):
         db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx) VALUES ('%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx)) 
         db.commit()
         return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
-    
+    ip = request.environ.get('HTTP_X_REAL_IP',request.remote_addr)
+    front_ip = ip.split('.')[0]
+    back_ip = ip.split('.')[1]
+    ip = front_ip + "." + back_ip
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
     comment = db.executeAll("""SELECT * FROM comment_table WHERE board_idx = %s""" %str(board_content_idx))
-    return render_template('/main/board_content.html',content=data,form=form,board_content_idx=board_content_idx,comment_data=comment)
+    return render_template('/main/board_content.html',ip=ip,content=data,form=form,board_content_idx=board_content_idx,comment_data=comment)
 
     
 
-@clone_board_bp.route('/del/<int:board_content_idx>/<int:password>/')
+@clone_board_bp.route('/del/<int:board_content_idx>/<string:password>/')
 def delContent(board_content_idx,password):
     ansPassword = db.executeAll("""SELECT content_password FROM board_content_table WHERE board_content_idx = '%s'"""%str(board_content_idx))[0]['content_password']
     if ansPassword == str(password):
