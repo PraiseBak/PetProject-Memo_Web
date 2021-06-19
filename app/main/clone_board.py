@@ -4,6 +4,7 @@ from pymysql import NULL
 from app.module.dbModule import Database
 from app.forms.forms import CommentAddForm, ContentAddForm, UserAddCheck
 from datetime import datetime
+from app.main.utils import get_covered_ip
 clone_board_bp = Blueprint('clone_board',__name__,url_prefix='/clone_board')
 db = Database() 
 
@@ -25,33 +26,32 @@ def add():
         error = "데이터 양식이 맞지 않습니다"
         flash(error)
     elif request.method == 'POST':
-        db.execute("""INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password) VALUES ('%s','%s','%s','%s','%s')""" % (text, title,datetime.now(),username,password)) 
+        db.execute("""INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password,write_ip) VALUES ('%s','%s','%s','%s','%s','%s')""" % (text, title,datetime.now(),username,password,get_covered_ip())) 
         db.commit()
         return redirect(url_for("clone_board.list"))
     return render_template('/main/board_add.html',form=form,modify=0)
 
+
 @clone_board_bp.route('/list/<int:board_content_idx>/',methods=['POST','GET'])
 def content(board_content_idx):
     data = None
+    db = Database() 
     comment = None
     form = CommentAddForm()
     if request.method == 'POST' and form.validate_on_submit():
         username = form.username.data
         password = form.password.data
         comment = form.content_text.data
-        db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,comment_idx) VALUES ('%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,comment_idx)) 
+        comment_idx = db.executeAll("""SELECT COUNT(*) FROM comment_table WHERE board_idx='%s'""" %(board_content_idx))
+        ip = get_covered_ip()
+        db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,comment_idx,write_ip) VALUES ('%s','%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,comment_idx[0]['COUNT(*)']+1,ip)) 
         db.commit()
         return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
 
-    ip = request.environ.get('HTTP_X_REAL_IP',request.remote_addr)
-    front_ip = ip.split('.')[0]
-    back_ip = ip.split('.')[1]
-    ip = front_ip + "." + back_ip
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
     comment = db.executeAll("""SELECT * FROM comment_table WHERE board_idx = %s""" %str(board_content_idx))
-    return render_template('/main/board_content.html',ip=ip,content=data,form=form,board_content_idx=board_content_idx,comment_data=comment)
+    return render_template('/main/board_content.html',content=data,form=form,board_content_idx=board_content_idx,comment_data=comment)
 
-    
 
 @clone_board_bp.route('/del/<int:board_content_idx>/<string:password>/')
 def delContent(board_content_idx,password):
@@ -66,7 +66,6 @@ def delContent(board_content_idx,password):
     else:
         flash("wrong password")
         return redirect(url_for("clone_board.content",board_content_idx=board_content_idx)) 
-    
     return redirect(url_for("clone_board.list"))
 
     
@@ -111,21 +110,7 @@ def delComment(board_content_idx,comment_password,comment_idx):
         db.commit()
     else:
         flash("wrong password")
-
     return redirect(url_for("clone_board.content",board_content_idx=board_content_idx))
-
-
-@clone_board_bp.route('/commentAdd/<int:board_content_idx>/<int:comment_idx>',methods=['POST','GET'])
-def commentAdd(board_content_idx,comment_idx):
-    form = CommentAddForm()
-    if request.method == 'POST' and form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-        comment = form.content_text.data
-        db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,comment_idx) VALUES ('%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,comment_idx)) 
-        db.commit()
-        return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
-    
 
 
 
@@ -137,24 +122,13 @@ def subCommentAdd(board_content_idx,parent_comment_idx):
             username = form.username.data
             password = form.password.data
             comment = form.content_text.data
-            db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,parent_comment_idx) VALUES ('%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,parent_comment_idx)) 
+            comment_idx = db.executeAll("""SELECT COUNT(*) FROM comment_table WHERE board_idx='%s'""" %(board_content_idx))
+            ip = get_covered_ip()
+            db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,parent_comment_idx,comment_idx,write_ip) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,parent_comment_idx,comment_idx[0]['COUNT(*)']+1,ip)) 
             db.commit()
         else:
             flash("wrong input")
+
     return redirect(url_for("clone_board.content",board_content_idx=board_content_idx)) 
 
     
-@clone_board_bp.route('/addComment/<int:board_content_idx>/<int:comment_idx>/',methods=['POST','GET'])
-def addComment(board_content_idx,comment_idx):
-    form = CommentAddForm()
-    if request.method == 'POST' and form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-        comment = form.content_text.data
-        db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,comment_idx) VALUES ('%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,comment_idx)) 
-        db.commit()
-    return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
-
-"""
-<form action="{{ url_for('clone_board.content',board_content_idx=board_content_idx) }}" method="post">
-"""

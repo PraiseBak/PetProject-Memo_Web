@@ -1,5 +1,4 @@
 from flask import Blueprint, request, render_template, flash, redirect, url_for
-from app.main.utils import get_ip
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import redirect
 from app.module.dbModule import Database
@@ -24,5 +23,4 @@ def sign():
 		else:
 			flash("이미 존재하는 사용자입니다")
 
-	url = get_ip()
-	return render_template('/main/sign.html',url=url,form=form)
+	return render_template('/main/sign.html',form=form)

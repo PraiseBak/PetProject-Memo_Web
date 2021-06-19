@@ -37,8 +37,8 @@ if __name__ == "__main__":
    user_name_column_add_sql = """ALTER TABLE board_content_table add write_user_name varchar(256) NOT NULL""";
    content_comment_add_sql = """ALTER TABLE board_content_table drop column content_comment""";
    content_name_change_sql = """ALTER TABLE comment_table change user_name username varchar(256) NOT NULL"""
-   column_add_sql = """ALTER TABLE comment_table add parent_comment_idx INT UNSIGNED""";
-
+   column_add_sql = """ALTER TABLE board_content_table add write_ip VARCHAR(256) NOT NULL""";
+   
 
 
    comment_table_add_sql = """ CREATE TABLE comment_table(
@@ -73,5 +73,4 @@ if __name__ == "__main__":
       
    db = Database()
    db.execute(column_add_sql)
-   db.execute(content_name_change_sql)
    db.commit()
