@@ -6,16 +6,17 @@ from app.forms.forms import CommentAddForm, ContentAddForm, UserAddCheck
 from datetime import datetime
 from app.main.utils import get_covered_ip
 clone_board_bp = Blueprint('clone_board',__name__,url_prefix='/clone_board')
-db = Database() 
 
 
 @clone_board_bp.route('/list')
 def list():
+    db = Database() 
     content_list = db.executeAll("SELECT * FROM board_content_table")
     return render_template('/main/board.html',content_list=content_list)
 
 @clone_board_bp.route('/add',methods=['POST','GET'])
 def add():
+    db = Database() 
     form = ContentAddForm()
     title = form.content_title.data
     text = form.content_text.data
@@ -35,8 +36,8 @@ def add():
 @clone_board_bp.route('/list/<int:board_content_idx>/',methods=['POST','GET'])
 def content(board_content_idx):
     data = None
-    db = Database() 
     comment = None
+    db = Database() 
     form = CommentAddForm()
     if request.method == 'POST' and form.validate_on_submit():
         username = form.username.data
@@ -55,6 +56,7 @@ def content(board_content_idx):
 
 @clone_board_bp.route('/del/<int:board_content_idx>/<string:password>/')
 def delContent(board_content_idx,password):
+    db = Database() 
     ansPassword = db.executeAll("""SELECT content_password FROM board_content_table WHERE board_content_idx = '%s'"""%str(board_content_idx))[0]['content_password']
     if ansPassword == str(password):
         db.execute("""DELETE FROM board_content_table WHERE board_content_idx = '%s'""" %str(board_content_idx))
@@ -71,6 +73,7 @@ def delContent(board_content_idx,password):
     
 @clone_board_bp.route('/modify/<int:board_content_idx>/<int:password>',methods=['POST','GET'])
 def modify(board_content_idx,password):
+    db = Database() 
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
     error = None
     if request.method == 'POST':
@@ -100,6 +103,7 @@ def modify(board_content_idx,password):
 
 @clone_board_bp.route('/delContent/<int:board_content_idx>/<string:comment_password>/<int:comment_idx>')
 def delComment(board_content_idx,comment_password,comment_idx):
+    db = Database() 
     ansPassword = db.executeAll("""SELECT password FROM comment_table WHERE board_idx = '%s' """ %str(board_content_idx))[comment_idx-1]['password']
 
     if str(comment_password) == ansPassword:
@@ -116,6 +120,7 @@ def delComment(board_content_idx,comment_password,comment_idx):
 
 @clone_board_bp.route('/subCommentAdd/<int:board_content_idx>/<int:parent_comment_idx>',methods=['POST','GET'])
 def subCommentAdd(board_content_idx,parent_comment_idx):
+    db = Database() 
     form = CommentAddForm()
     if request.method == "POST":
         if form.validate_on_submit():
