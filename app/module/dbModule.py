@@ -73,4 +73,5 @@ if __name__ == "__main__":
       
    db = Database()
    db.execute(column_add_sql)
+   db.execute(content_name_change_sql)
    db.commit()

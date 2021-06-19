@@ -92,6 +92,19 @@
             <br>
             <br>
             
+
+            <script>
+                var comment_idx = 0;
+                function add_idx()
+                {
+                    comment_idx += 1;                    
+                }
+                
+                function get_idx()
+                {
+                    return comment_idx;
+                }
+            </script>
             <div class="write_div" style="float:left;">
                 &nbsp&nbsp&nbsp {{content[0]['board_content']}}
             </div>
@@ -101,30 +114,8 @@
         </div> 
             <hr color= "black">
         
-        
         <div class="comment_area">
             
-            <form method="post" class="post-form">
-                {{form.csrf_token}}
-                <div class="content_area">
-                    <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" > <br>
-                    <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
-                        class="form-control" name="password" id="password" style="width:185px;">
-                    <form action="{{ url_for('clone_board.content',board_content_idx=board_content_idx) }}" method="post">
-                        
-                        <label for="content_text" style="font-size:16px;"></label>
-                        <textarea name="content_text" id="content_text" rows="4"></textarea>
-                        <input type="submit" style="font-size:16px;" value="등록">
-                    </form>
-                </div>
-            </form>
-
-
-            <style>
-                .content_area{
-                    text-align:left;
-                }
-            </style>
             <table class="table" style="table-layout:fixed;">
                 <tr class="thead-dark">
                 </tr>   
@@ -207,23 +198,39 @@
                                             border: none;
                                         }
                                     </style>
-                                    
                                 </tr>
-                                
-                                
                             {% endif %}
                         {% endfor %}
-
-
-                        
                         {% endif %}
                     <tr>
                     </td>
                     {% endfor %}
+                    <script>
+                        add_idx();
+                    </script>
                     
                 </tbody>
             </table>      
-               
+            
+            <form method="post" class="post-form" id="myAction" action="{{ url_for('clone_board.addComment',board_content_idx=board_content_idx,comment_idx=0) }}">
+                {{form.csrf_token}}
+                <div class="content_area">
+                    <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" > <br>
+                    <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
+                        class="form-control" name="password" id="password" style="width:185px;">
+                        <label for="content_text" style="font-size:16px;"></label>
+                        <textarea name="content_text" id="content_text" rows="4"></textarea>
+                        <input type="submit" style="font-size:16px;" value="등록">
+                    </form>
+                </div>
+            </form>
+
+
+            <style>
+                .content_area{
+                    text-align:left;
+                }
+            </style>
             
 
 
@@ -236,6 +243,7 @@
 
 
     </body>
+    
     <br>
 </html>
 
@@ -244,8 +252,15 @@
 
 {% block script %}
 
+<script>
 
-<script type='text/javascript'>
+
+
+window.onload = function() {
+    var form_url = $("#myAction").attr('action');
+    form_url = form_url.replace("0/",comment_idx+'/');
+    alert(form_url);
+}
 
 function btn_click(obj)
 {

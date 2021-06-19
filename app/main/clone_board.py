@@ -32,16 +32,17 @@ def add():
 
 @clone_board_bp.route('/list/<int:board_content_idx>/',methods=['POST','GET'])
 def content(board_content_idx):
-    form = CommentAddForm()
     data = None
     comment = None
+    form = CommentAddForm()
     if request.method == 'POST' and form.validate_on_submit():
         username = form.username.data
         password = form.password.data
         comment = form.content_text.data
-        db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx) VALUES ('%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx)) 
+        db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,comment_idx) VALUES ('%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,comment_idx)) 
         db.commit()
         return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
+
     ip = request.environ.get('HTTP_X_REAL_IP',request.remote_addr)
     front_ip = ip.split('.')[0]
     back_ip = ip.split('.')[1]
@@ -114,6 +115,20 @@ def delComment(board_content_idx,comment_password,comment_idx):
     return redirect(url_for("clone_board.content",board_content_idx=board_content_idx))
 
 
+@clone_board_bp.route('/commentAdd/<int:board_content_idx>/<int:comment_idx>',methods=['POST','GET'])
+def commentAdd(board_content_idx,comment_idx):
+    form = CommentAddForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        comment = form.content_text.data
+        db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,comment_idx) VALUES ('%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,comment_idx)) 
+        db.commit()
+        return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
+    
+
+
+
 @clone_board_bp.route('/subCommentAdd/<int:board_content_idx>/<int:parent_comment_idx>',methods=['POST','GET'])
 def subCommentAdd(board_content_idx,parent_comment_idx):
     form = CommentAddForm()
@@ -129,3 +144,17 @@ def subCommentAdd(board_content_idx,parent_comment_idx):
     return redirect(url_for("clone_board.content",board_content_idx=board_content_idx)) 
 
     
+@clone_board_bp.route('/addComment/<int:board_content_idx>/<int:comment_idx>/',methods=['POST','GET'])
+def addComment(board_content_idx,comment_idx):
+    form = CommentAddForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        comment = form.content_text.data
+        db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,comment_idx) VALUES ('%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,comment_idx)) 
+        db.commit()
+    return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
+
+"""
+<form action="{{ url_for('clone_board.content',board_content_idx=board_content_idx) }}" method="post">
+"""
