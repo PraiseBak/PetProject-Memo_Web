@@ -6,6 +6,5 @@ main = Blueprint('main',__name__,url_prefix='/')
 @main.route('/',methods=['GET'])
 
 def index():
-	url = utils.get_ip()
-	return render_template('/main/index.html',url=url)
+	return render_template('/main/index.html')
 
