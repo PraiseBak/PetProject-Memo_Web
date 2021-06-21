@@ -11,7 +11,7 @@ clone_board_bp = Blueprint('clone_board',__name__,url_prefix='/clone_board')
 @clone_board_bp.route('/list')
 def list():
     db = Database() 
-    content_list = db.executeAll("SELECT * FROM board_content_table")
+    content_list = db.executeAll("SELECT * FROM board_content_table ORDER BY board_content_idx DESC;")
     return render_template('/main/board.html',content_list=content_list)
 
 
@@ -30,7 +30,6 @@ def content(board_content_idx):
         db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,comment_idx,write_ip) VALUES ('%s','%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,comment_idx[0]['COUNT(*)']+1,ip)) 
         db.commit()
         return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
-
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
     comment = db.executeAll("""SELECT * FROM comment_table WHERE board_idx = %s""" %str(board_content_idx))
     return render_template('/main/board_content.html',content=data,form=form,board_content_idx=board_content_idx,comment_data=comment)

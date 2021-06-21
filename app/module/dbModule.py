@@ -1,5 +1,11 @@
-import pymysql
+import sys
+import os
 
+sys.path.append(".")
+from app.main.utils import get_covered_ip
+
+
+import pymysql
 class Database():
 
    def __init__(self):
@@ -69,8 +75,15 @@ if __name__ == "__main__":
       board_content VARCHAR(256) NOT NULL,
       board_content_idx int UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY
    );"""
-   
-      
-   db = Database()
-   db.execute(column_add_sql)
-   db.commit()
+
+   from datetime import datetime
+   for i in range(1,300):
+      comment="엄준식 화이팅!" + str(i)
+      username = "엄준식" + str(i)
+      password = "1234"
+      title="엄준식 화이팅!"+ str(i)
+      db = Database()
+      db.execute("""INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password,write_ip) 
+      VALUES ('%s','%s','%s','%s','%s','%s')""" % (comment,title,datetime.now(),username,password,get_covered_ip()))
+      db.commit()
+
