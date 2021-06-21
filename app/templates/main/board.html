@@ -4,6 +4,21 @@
 <html>
     <body>
         <div class="container my-3">
+
+
+            <br>
+            
+            <!-- flash 오류 -->
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+
+
+
+
+
             <table class="table">
                 <thead>
                     <tr class="thead-dark">
@@ -18,16 +33,16 @@
                     {% if content_list %}
                         {% for content in content_list %}
                         <tr>
-                            <td style = "cursor:pointer;" onClick = "location.href='/clone_board/list/{{content['board_content_idx']}}'">
+                            <td style = "cursor:pointer;" onClick = "location.href='/clone_board/content/{{content['board_content_idx']}}'">
                             {{ content['board_content_idx'] }}
                             </td>
-                        <td style = "cursor:pointer;" onClick = "location.href='/clone_board/list/{{content['board_content_idx']}}'">
+                        <td style = "cursor:pointer;" onClick = "location.href='/clone_board/content/{{content['board_content_idx']}}'">
                             {{ content['board_content_title'] }}
                             </td>
-                            <td style = "cursor:pointer;" onClick = "location.href='/clone_board/list/{{content['board_content_idx']}}'">
+                            <td style = "cursor:pointer;" onClick = "location.href='/clone_board/content/{{content['board_content_idx']}}'">
                             {{ content['write_user_name'] }}({{content['write_ip']}})
                             </td>
-                            <td style = "cursor:pointer;" onClick = "location.href='/clone_board/list/{{content['board_content_idx']}}'">
+                            <td style = "cursor:pointer;" onClick = "location.href='/clone_board/content/{{content['board_content_idx']}}'">
                             {{ content['write_time'] }}
                             </td>
                             
@@ -35,13 +50,42 @@
 
                         {% endfor %}
                     {% else %}
-                    <tr>
-                        <td colspan="3">너에게 받은만큼 더 행복해질게</td>
-                    </tr>
                     {% endif %}
                     <br>
                 </tbody>
+                
             </table>
+
+            <!-- 페이징처리 시작 -->
+            <ul class="pagination justify-content-center">
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ cur_page+1 }}">다음</a>
+                </li>
+
+                
+                
+
+
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ cur_page-1 }}">이전</a>
+                </li>
+
+                {% for page in page_btn_list %}
+                    {{page}}
+                {% endfor %}
+            </ul>
+
+                
+
+
+            <!-- 페이징처리 끝 -->
+                
+
+
+
+
+
+
             <div class="btns">
                 <li><a href="/clone_board/add" class="button big">글쓰기</a></li>
             </div>
