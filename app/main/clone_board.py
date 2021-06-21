@@ -4,18 +4,73 @@ from pymysql import NULL
 from app.module.dbModule import Database
 from app.forms.forms import CommentAddForm, ContentAddForm, UserAddCheck
 from datetime import datetime
-from app.main.utils import get_covered_ip
+from app.main.utils import *
 clone_board_bp = Blueprint('clone_board',__name__,url_prefix='/clone_board')
 
 
+
+@clone_board_bp.route('/')
 @clone_board_bp.route('/list')
 def list():
     db = Database() 
-    content_list = db.executeAll("SELECT * FROM board_content_table ORDER BY board_content_idx DESC;")
-    return render_template('/main/board.html',content_list=content_list)
+    contentCount= db.executeAll(getAutoIncrementQuery())[0]['AUTO_INCREMENT'] -1
+    page_unit = 30
+    maxPage = int(contentCount / page_unit) + 1
+    page = request.args.get('page', type=int, default=1)
+    if page > maxPage:
+        page = maxPage
+        flash("최대 페이지 입니다")
+        return redirect(url_for("clone_board.list",page=maxPage))
+    
+    pageSQL = getPageQuery(page,page_unit)
+    #auto increment value = cur content count
+    content_list = db.executeAll(pageSQL)
+    if page + 9 < maxPage:
+        maxPage = page + 9
+
+    page_btn_list = []
+    page_btn_list.append(page)
+    leftLook = True
+    tmpPage = 0
+    i = 1
+    count = 1
+    #왼쪽한번 오른쪽한번 다시 왼쪽 ㄱ
+    while count != 10:
+        if leftLook:
+            tmpPage = page-i
+            if tmpPage > 0:
+                page_btn_list.append(tmpPage)
+                count += 1
+            else:
+                saveLeftIndex = -1
+                leftLook=False
+                i=0
+            if count == 5:
+                saveLeftIndex = i+1
+                leftLook=False
+                i=0
+        else:
+            tmpPage = page + i
+            if tmpPage <= maxPage:
+                page_btn_list.append(tmpPage)
+                count += 1
+            else:
+                break
+        i+=1
+    while count != 10 and saveLeftIndex != -1:
+        tmpPage = page-saveLeftIndex
+        if tmpPage > 0:
+            page_btn_list.append(tmpPage)
+            count += 1
+        else:
+            break
+        saveLeftIndex+=1
+    page_btn_list.sort()
+
+    return render_template('/main/board.html',content_list=content_list,cur_page=page,page_btn_list=page_btn_list)
 
 
-@clone_board_bp.route('/list/<int:board_content_idx>/',methods=['POST','GET'])
+@clone_board_bp.route('/content/<int:board_content_idx>/',methods=['POST','GET'])
 def content(board_content_idx):
     data = None
     comment = None

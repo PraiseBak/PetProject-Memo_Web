@@ -1,6 +1,5 @@
 import sys
 import os
-
 sys.path.append(".")
 from app.main.utils import get_covered_ip
 
