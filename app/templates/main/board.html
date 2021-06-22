@@ -56,23 +56,31 @@
                 
             </table>
 
+            <div class="btns" style="float:right; margin-right:40px">
+                <a href="/clone_board/add" class="button big">글쓰기</a>
+            </div>
+
+            <style>
+                .btns{
+                    list-style: none;
+                }
+            </style>
+            <br><br>
+
             <!-- 페이징처리 시작 -->
             <ul class="pagination justify-content-center">
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ cur_page+1 }}">다음</a>
-                </li>
+                <a class="page-link" href="?page=1">처음</a> &nbsp
 
-                
-                
-
-
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ cur_page-1 }}">이전</a>
-                </li>
-
+                <a class="page-link" href="?page={{ cur_page-1 }}">이전</a>
+                &nbsp
                 {% for page in page_btn_list %}
+                    <a class="page-link" href="?page={{page}}">
                     {{page}}
+                    </a>
                 {% endfor %}
+                &nbsp
+                <a class="page-link" href="?page={{ cur_page+1 }}">다음</a>
+                <a class="page-link" href="?page={{max_page+1}}">끝  </a> &nbsp
             </ul>
 
                 
@@ -86,16 +94,7 @@
 
 
 
-            <div class="btns">
-                <li><a href="/clone_board/add" class="button big">글쓰기</a></li>
-            </div>
-
-
-            <style>
-                .btns{
-                    list-style: none;
-                }
-            </style>
+            
         </div>
 
     </body>

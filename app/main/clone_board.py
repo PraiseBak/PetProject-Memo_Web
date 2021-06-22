@@ -67,7 +67,7 @@ def list():
         saveLeftIndex+=1
     page_btn_list.sort()
 
-    return render_template('/main/board.html',content_list=content_list,cur_page=page,page_btn_list=page_btn_list)
+    return render_template('/main/board.html',content_list=content_list,max_page = maxPage,cur_page=page,page_btn_list=page_btn_list)
 
 
 @clone_board_bp.route('/content/<int:board_content_idx>/',methods=['POST','GET'])
@@ -86,6 +86,7 @@ def content(board_content_idx):
         db.commit()
         return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
+    print(data)
     comment = db.executeAll("""SELECT * FROM comment_table WHERE board_idx = %s""" %str(board_content_idx))
     return render_template('/main/board_content.html',content=data,form=form,board_content_idx=board_content_idx,comment_data=comment)
 
@@ -189,10 +190,28 @@ def add():
     elif request.method == 'POST':
         title = form.content_title.data
         text = form.content_text.data
-        print(text)
         username = form.username.data
         password = form.password.data
         db.execute("""INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password,write_ip) VALUES ('%s','%s','%s','%s','%s','%s')""" % (text, title,datetime.now(),username,password,get_covered_ip())) 
         db.commit()
         return redirect(url_for("clone_board.list"))
     return render_template('/main/board_add.html',form=form,modify=0)
+
+@clone_board_bp.route('/recommend/<int:board_content_idx>/<int:mode>',methods=['POST','GET'])
+def recommendProcess(board_content_idx,mode):
+    curIp = socket.gethostbyname(socket.gethostname())
+    db = Database()
+    #중복 체크
+    recommend_mode = "recommend"
+    if mode != 1:
+        recommend_mode = "unrecommend"
+    data = db.executeAll("""SELECT * FROM recommend_table WHERE board_content_idx ='%s' and %s_ip='%s'""" %(str(board_content_idx),recommend_mode,str(curIp)))
+    if len(data) != 0:
+        flash("중복된 요청입니다.")
+    else:
+        db.executeAll("""INSERT INTO recommend_table (board_content_idx, %s_ip) VALUES (%s,'%s') """ %(recommend_mode,board_content_idx,curIp))
+        db.executeAll("""UPDATE board_content_table SET %s=%s+1 WHERE board_content_idx='%s' """ %(recommend_mode,recommend_mode,str(board_content_idx)))
+        db.commit()
+    return redirect(url_for("clone_board.content",board_content_idx=board_content_idx)) 
+    
+    
