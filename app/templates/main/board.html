@@ -69,24 +69,90 @@
 
             <!-- 페이징처리 시작 -->
             <ul class="pagination justify-content-center">
-                <a class="page-link" href="?page=1">처음</a> &nbsp
+                
+                {% if searchMode %}
+                    {% if searchContent %}
+                        <a class="page-link" href="?page=1&searchMode={{searchMode}}&content={{searchContent}}">처음</a> 
+                        {%if cur_page !=1 %}
+                            <a class="page-link" href="?page={{cur_page-1}}&searchMode={{searchMode}}&content={{searchContent}}">이전</a>
 
-                <a class="page-link" href="?page={{ cur_page-1 }}">이전</a>
-                &nbsp
-                {% for page in page_btn_list %}
-                    <a class="page-link" href="?page={{page}}">
-                    {{page}}
-                    </a>
-                {% endfor %}
-                &nbsp
-                <a class="page-link" href="?page={{ cur_page+1 }}">다음</a>
-                <a class="page-link" href="?page={{max_page+1}}">끝  </a> &nbsp
+                        {%endif%}
+                        {% for page in page_btn_list %}
+                            <a class="page-link" href="?page={{page}}&searchMode={{searchMode}}&content={{searchContent}}">
+                            {{page}}
+                            </a>
+                        {% endfor %}
+                        {%if cur_page != max_page%}
+                            <a class="page-link" href="?page={{ cur_page+1 }}&searchMode={{searchMode}}&content={{searchContent}}">다음</a>
+                        {% endif %}
+                        <a class="page-link" href="?page={{max_page}}&searchMode={{searchMode}}&content={{searchContent}}">끝  </a> 
+                    {% else %} 
+                        <a class="page-link" href="?page=1">처음</a> 
+                        {%if cur_page != 1%}
+                            <a class="page-link" href="?page={{cur_page-1}}">이전</a>
+                        {% endif %}
+                        {% for page in page_btn_list %}
+                            <a class="page-link" href="?page={{page}}">
+                            {{page}}
+                            </a>
+                        {% endfor %}
+                        {%if cur_page != max_page%}
+                            <a class="page-link" href="?page={{ cur_page+1 }}">다음</a>
+                        {% endif %}
+
+                        <a class="page-link" href="?page={{max_page}}">끝  </a> 
+                    {% endif %}
+                {% else %}
+                    <a class="page-link" href="?page=1">처음</a> 
+                    {% if cur_page != 1 %}
+                        <a class="page-link" href="?page={{cur_page-1}}">이전</a>
+                    {% endif %}
+
+                    {% for page in page_btn_list %}
+                        <a class="page-link" href="?page={{page}}">
+                        {{page}}
+                        </a>
+                    {% endfor %}
+                    {%if cur_page != max_page%}
+                        <a class="page-link" href="?page={{ cur_page+1 }}">다음</a>
+                    {% endif %}
+                    <a class="page-link" href="?page={{max_page}}">끝  </a> 
+                {% endif %}
+                
             </ul>
-
+            <!-- 페이징처리 끝 -->
                 
 
 
-            <!-- 페이징처리 끝 -->
+            
+                <center>
+                    <select name="search_option" id="search_option" style="width:10%;">
+                        <option value="write_user_name">글쓴이</option>
+                        <option value="board_content_title">제목</option>
+                        <option value="board_content">내용</option>
+                    </select>
+                        <textarea class="search_content " name="search_content" id="search_content" maxlength="10" rows="1" style="width:20%;"></textarea>
+                    <a class="button big send_search" url="#" onclick=send_search(this)>검색</a>
+                </center>
+                
+                <style>
+                    #search_option
+                    {
+                        margin-left:30%;
+                        float:left;
+                    }
+                    .search_content
+                    {
+                        margin-left:0.3%;
+                        height:50px;
+                        float:left;
+                    }
+                    .send_search
+                    {
+                        margin-right:32%;
+                    }
+                </style>
+                
                 
 
 
@@ -100,8 +166,21 @@
     </body>
 </html>
 
+{% endblock %}
+
+{% block script %}
+
+<script>
+    function send_search(obj)
+    {   
+        var selectBox = document.getElementById("search_option");
+        var selectedMode = selectBox.options[selectBox.selectedIndex].value;
+        var content = document.getElementById("search_content").value;
+        location.href = "?searchMode="+selectedMode+"&content="+content;
+    }
 
 
+</script>
 
 
 {% endblock %}

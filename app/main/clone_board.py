@@ -13,18 +13,32 @@ clone_board_bp = Blueprint('clone_board',__name__,url_prefix='/clone_board')
 @clone_board_bp.route('/list')
 def list():
     db = Database() 
-    contentCount= db.executeAll(getAutoIncrementQuery())[0]['AUTO_INCREMENT'] -1
-    page_unit = 30
-    maxPage = int(contentCount / page_unit) + 1
     page = request.args.get('page', type=int, default=1)
+    page_unit = 30
+    if page == 1:
+        page = 0
+    searchMode = request.args.get('searchMode')
+    searchContent = request.args.get('content')
+    
+    pageSQL,getCountSQL = getPageQuery(page,page_unit,searchMode,searchContent)
+    contentCount = db.executeAll(getCountSQL)
+    contentCount = contentCount[0]['COUNT(write_user_name)']
+    content_list = db.executeAll(pageSQL)
+    #contentCount= db.executeAll(getAutoIncrementQuery())[0]['AUTO_INCREMENT'] -1
+
+    maxPage = int(contentCount / page_unit) + 1
+    
+   
     if page > maxPage:
         page = maxPage
-        flash("최대 페이지 입니다")
-        return redirect(url_for("clone_board.list",page=maxPage))
-    
-    pageSQL = getPageQuery(page,page_unit)
+        flash("존재하지 않는 페이지입니다")
+        return redirect(url_for('clone_board.list'))
+        
+    if page == 0:
+        page = 1
     #auto increment value = cur content count
-    content_list = db.executeAll(pageSQL)
+    
+    
     if page + 9 < maxPage:
         maxPage = page + 9
 
@@ -57,6 +71,7 @@ def list():
             else:
                 break
         i+=1
+
     while count != 10 and saveLeftIndex != -1:
         tmpPage = page-saveLeftIndex
         if tmpPage > 0:
@@ -66,8 +81,8 @@ def list():
             break
         saveLeftIndex+=1
     page_btn_list.sort()
-
-    return render_template('/main/board.html',content_list=content_list,max_page = maxPage,cur_page=page,page_btn_list=page_btn_list)
+    return render_template('/main/board.html',content_list=content_list,max_page = maxPage,
+    cur_page=page,page_btn_list=page_btn_list,searchMode=searchMode,searchContent=searchContent)
 
 
 @clone_board_bp.route('/content/<int:board_content_idx>/',methods=['POST','GET'])
@@ -86,7 +101,6 @@ def content(board_content_idx):
         db.commit()
         return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
-    print(data)
     comment = db.executeAll("""SELECT * FROM comment_table WHERE board_idx = %s""" %str(board_content_idx))
     return render_template('/main/board_content.html',content=data,form=form,board_content_idx=board_content_idx,comment_data=comment)
 
