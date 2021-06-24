@@ -15,11 +15,32 @@
 
                 <h1>ppippi Inside</h1>
                 <p>
-                    see you chic 삐삐<br>
-                    click to go <a href="/clone_board/list">board list page</a>
+                    {% if g.user %}
+                        see you chic {{g.user}}<br>
+                    {% endif %}
+                    <ul class="login">
+                        <div style="text-align: center;">
+                            {% if g.user %}
+                                <li><a href="/checklist" style="margin-bottom:10px;" class="button big checklist">MyCheckList</a></li>
+                                <li><a href="/my_profile" style="margin-bottom:10px;" class="button big">My Profile</a></li>
+                                <li><a href="/logout/clone_board" style="margin-bottom:10px;" class="button big">Logout</a></li>
+                            {% else %}
+                                <li><a href="/login/clone_board" class="button big">Login</a></li>
+                            {% endif %}
+                        </div>
+                    </ul>
+
+                    click to <a href="/clone_board/list">board list</a>
+                    <br>
+                    click to <a href="/">main page</a>
+                    
                     <br>
                     <br>
                     <style>
+                        .login
+                        {
+                            list-style:none;
+                        }
 			            div { text-align: center; }
 		            </style>
                 </p>

@@ -39,10 +39,9 @@ if __name__ == "__main__":
     
 
    password_column_add_sql = """ALTER TABLE board_content_table add content_password varchar(256) NOT NULL""";
-   user_name_column_add_sql = """ALTER TABLE board_content_table add write_user_name varchar(256) NOT NULL""";
    content_comment_add_sql = """ALTER TABLE board_content_table drop column content_comment""";
    content_name_change_sql = """ALTER TABLE comment_table change user_name username varchar(256) NOT NULL"""
-   column_add_sql = """ALTER TABLE board_content_table add write_ip VARCHAR(256) NOT NULL""";
+   column_add_sql = """ALTER TABLE comment_table change login_user tinyint(1)""";
    
 
 
@@ -75,14 +74,10 @@ if __name__ == "__main__":
       board_content_idx int UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY
    );"""
 
-   from datetime import datetime
-   for i in range(1,300):
-      comment="엄준식 화이팅!" + str(i)
-      username = "엄준식" + str(i)
-      password = "1234"
-      title="엄준식 화이팅!"+ str(i)
-      db = Database()
-      db.execute("""INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password,write_ip) 
-      VALUES ('%s','%s','%s','%s','%s','%s')""" % (comment,title,datetime.now(),username,password,get_covered_ip()))
-      db.commit()
+   db = Database()
+   db.executeAll(column_add_sql)
+   db.commit()
+   
+   
+
 

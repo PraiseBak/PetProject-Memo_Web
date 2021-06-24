@@ -22,17 +22,16 @@
 
                 <h1>MemW</h1>
                 <p>
-                    웹 체크리스트 메뮤<br>
                     click to go <a href="/main">home</a>
                     {% if g.user %}
                         <br><br>
                         Hello {{g.user}}
                         <br><br>
+                        <a class="checklist" href="/checklist" class="button big">MyCheckList</a>
+                        <a class="checklist" href="/my_profile" class="button big">MyProfile</a>
                         <div class="logout">
                             <li>
-                                <a href="/logout" class="button big">
-                                                <span style = "color:white;"> Logout </span>
-                                </a>
+                                <a href="/logout" class="button big">Logout</a>
                             </li>
                         </div>
 

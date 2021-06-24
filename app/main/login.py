@@ -6,10 +6,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 db = Database()
 login_bp = Blueprint('login',__name__,url_prefix='/')
-
-@login_bp.route('/login',methods=['GET','POST'])
-
-def login():
+@login_bp.route('/login/<string:before_page>',methods=['GET','POST'])
+def login(before_page=None):
 	form = UserLoginForm()
 	if request.method == 'POST' and form.validate_on_submit():
 		error = None
@@ -31,15 +29,18 @@ def login():
 		if error is None:
 			session.clear()
 			session['user_id'] = user
+			if before_page:
+				return redirect(url_for(before_page+'.list'))
 			return redirect(url_for('main.index'))
 
 		flash(error)
-
 	return render_template('/main/login.html',form=form)
 
-@login_bp.route('/logout/')
-def logout():
+@login_bp.route('/logout/<string:before_page>')
+def logout(before_page):
 	session.clear()
+	if before_page:
+		return redirect(url_for(before_page+'.list'))
 	return redirect(url_for('main.index'))
 
 
@@ -53,7 +54,6 @@ def load_logged_in_user():
 	else:
 		db = Database()
 		g.user = db.executeOne("SELECT id,idx FROM user WHERE id = '%s' " % (user_id))
-		db.commit()
 		g.idx = g.user['idx']
 		g.user = g.user['id']
 

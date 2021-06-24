@@ -9,7 +9,6 @@ sign_bp = Blueprint('sign',__name__,url_prefix='/')
 @sign_bp.route('/sign',methods=['GET','POST'])
 
 def sign():
-
 	form = UserCreateForm()
 	db = Database()
 	if request.method == 'POST' and	form.validate_on_submit():
