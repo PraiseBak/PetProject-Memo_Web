@@ -1,9 +1,16 @@
 from flask import Blueprint, request, render_template, flash, redirect, url_for, g,session
 from app.module.dbModule import Database
-from app.forms.forms import CommentAddForm, ContentAddForm, UserAddCheck
+from app.forms.forms import CommentAddForm, ContentAddForm
 from datetime import datetime
 from app.main.utils import *
 clone_board_bp = Blueprint('clone_board',__name__,url_prefix='/clone_board') 
+
+def isLogged():
+    logged = '0'
+    user_id = session.get('user_id')
+    if user_id != None:
+        logged = '1'
+    return logged
 
 
 
@@ -26,8 +33,7 @@ def list():
 
     maxPage = int(contentCount / page_unit) + 1
     
-   
-    if page > maxPage:
+    if page > maxPage: 
         page = maxPage
         flash("존재하지 않는 페이지입니다")
         return redirect(url_for('clone_board.list'))
@@ -89,19 +95,16 @@ def content(board_content_idx):
     comment = None
     db = Database() 
     form = CommentAddForm()
-    user_id = session.get('user_id')
-    hasLogin = False
+    
     if request.method == 'POST' and form.validate_on_submit():
-        
         username = form.username.data
         password = form.password.data
         comment = form.content_text.data
         comment_idx = db.executeAll("""SELECT COUNT(*) FROM comment_table WHERE board_idx='%s'""" %(board_content_idx))
         ip = get_covered_ip()
-        if user_id != None:
-            hasLogin = 1
-
-        db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,comment_idx,write_ip,login_user) VALUES ('%s','%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,comment_idx[0]['COUNT(*)']+1,ip)) 
+        logged = isLogged()
+        db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,comment_idx,write_ip,login_user) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s'
+        )""" % (comment, username,password,datetime.now(),board_content_idx,comment_idx[0]['COUNT(*)']+1,ip,logged)) 
         db.commit()
         return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
@@ -109,7 +112,6 @@ def content(board_content_idx):
     return render_template('/main/board_content.html',content=data,form=form,board_content_idx=board_content_idx,comment_data=comment)
 
 
-    
 @clone_board_bp.route('/modify/<int:board_content_idx>/<int:password>',methods=['POST','GET'])
 def modify(board_content_idx,password):
     db = Database() 
@@ -188,7 +190,8 @@ def subCommentAdd(board_content_idx,parent_comment_idx):
             comment = form.content_text.data
             comment_idx = db.executeAll("""SELECT COUNT(*) FROM comment_table WHERE board_idx='%s'""" %(board_content_idx))
             ip = get_covered_ip()
-            db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,parent_comment_idx,comment_idx,write_ip) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,parent_comment_idx,comment_idx[0]['COUNT(*)']+1,ip)) 
+            logged = isLogged()
+            db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,parent_comment_idx,comment_idx,write_ip,login_user) VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,parent_comment_idx,comment_idx[0]['COUNT(*)']+1,ip,logged)) 
             db.commit()
         else:
             flash("wrong input")
@@ -210,7 +213,7 @@ def add():
         text = form.content_text.data
         username = form.username.data
         password = form.password.data
-        db.execute("""INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password,write_ip) VALUES ('%s','%s','%s','%s','%s','%s')""" % (text, title,datetime.now(),username,password,get_covered_ip())) 
+        db.execute("""INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password,write_ip,login_user) VALUES ('%s','%s','%s','%s','%s','%s','%s')""" % (text, title,datetime.now(),username,password,get_covered_ip(),isLogged())) 
         db.commit()
         return redirect(url_for("clone_board.list"))
     return render_template('/main/board_add.html',form=form,modify=0)

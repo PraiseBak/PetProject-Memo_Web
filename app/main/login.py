@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 db = Database()
 login_bp = Blueprint('login',__name__,url_prefix='/')
+@login_bp.route('/login',methods=['GET','POST'])
 @login_bp.route('/login/<string:before_page>',methods=['GET','POST'])
 def login(before_page=None):
 	form = UserLoginForm()
@@ -36,13 +37,13 @@ def login(before_page=None):
 		flash(error)
 	return render_template('/main/login.html',form=form)
 
+@login_bp.route('/logout')
 @login_bp.route('/logout/<string:before_page>')
-def logout(before_page):
+def logout(before_page=None):
 	session.clear()
 	if before_page:
 		return redirect(url_for(before_page+'.list'))
 	return redirect(url_for('main.index'))
-
 
 
 @login_bp.before_app_request

@@ -18,26 +18,24 @@
 		<!-- Header -->
         <header id="header" class="alt">
             <div class="inner">
-
-
                 <h1>MemW</h1>
                 <p>
-                    click to go <a href="/main">home</a>
                     {% if g.user %}
-                        <br><br>
-                        Hello {{g.user}}
-                        <br><br>
-                        <a class="checklist" href="/checklist" class="button big">MyCheckList</a>
-                        <a class="checklist" href="/my_profile" class="button big">MyProfile</a>
-                        <div class="logout">
-                            <li>
-                                <a href="/logout" class="button big">Logout</a>
-                            </li>
-                        </div>
+                        Hello {{g.user}}<br>
+                        <ul class="login">
+                            <!--li><a href="/checklist" style="margin-bottom:10px;" class="button big checklist">MyCheckList</a></li!-->
+                            테스트{{request.path}}
+                            <li><a href="/profile" style="margin-bottom:10px;" class="button big">My Profile</a></li>
+                            <li><a href="/logout" style="margin-bottom:10px;" class="button big">Logout</a></li>
+                        </ul>
 
                         <style>
-                            .logout{ list-style: none; color="white"; }
-                        </style>
+                        .login
+                        {
+                            list-style:none;
+                        }
+			            div { text-align: center; }
+		                </style>
 
                     {% else %}
                         <div class="btns">
@@ -71,8 +69,7 @@
 						    }
 						</style>
                     {% endif %}
-
-
+                    click to <a href="/">main page</a>
                 </p>
             </div>
 
