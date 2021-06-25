@@ -42,19 +42,26 @@
             
                     <div class="btns">
                         <div class="modify">  
+                            {% if content[0]['login_user'] == 1%}
+                                {% if g.user == content[0]['write_user_name'] %}
 
-                            {% if (g.user != content[0]['write_user_name']) or (content[0]['login_user'] != 1) %}
-                                <a href="#" url="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'],password=-1)}}" 
-                                    class="button" id="modifyBtn" onclick="btn_click(this)">수정</a>
-                            {% else %}
-                                <a href="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'],password=-1)}}" 
+                                    <a href="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'],password=-1)}}" 
                                     class="button" id="modifyBtn">수정</a>
-
+                                    <div class="delete"> 
+                                        <a href="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx'],password=-1) }}"
+                                        class="button" id="deleteBtn"> 삭제 </a>
+                                    </div>
+                                {% endif %}
+                                
+                            {% else %}
+                                <a href="#" url="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'],password=-1)}}" 
+                                class="button" id="modifyBtn" onclick="btn_click(this)">수정</a>
+                                <div class="delete"> 
+                                    <a href="#" url="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx'],password=-1) }}"
+                                    class="button" id="deleteBtn" onclick=btn_click(this)> 삭제 </a>
+                                </div>
                             {% endif %}
-                        </div>
-                        <div class="delete">  
-                            <a href="#" url="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx'],password=-1) }}"
-                                class="button" id="deleteBtn" onclick=btn_click(this)> 삭제 </a>
+
                         </div>
                         <div class="username">  
                         <br><br>

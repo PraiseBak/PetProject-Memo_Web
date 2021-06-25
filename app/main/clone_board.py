@@ -33,6 +33,7 @@ def list():
     maxPage = int(contentCount / page_unit) + 1
     
    
+    
     if page > maxPage:
         page = maxPage
         flash("존재하지 않는 페이지입니다")
@@ -74,62 +75,76 @@ def content(board_content_idx):
 @clone_board_bp.route('/modify/<int:board_content_idx>/<string:password>',methods=['POST','GET'])
 def modify(board_content_idx,password = None):
     db = Database() 
+    
+    
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
     error = None
-    if request.method == 'POST':
-        form = ContentAddForm()
-        if form.validate_on_submit():
-            db.execute("""UPDATE board_content_table SET write_time='%s',board_content_title='%s',board_content='%s' WHERE board_content_idx = '%s'""" 
-            % (datetime.now(),form.content_title.data,form.content_text.data,str(data[0]['board_content_idx']) ))
-
-            db.commit() 
-            return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
+    form = ContentAddForm()
+    if data[0]['login_user'] == 1 and (data[0]['write_user_name']==session.get('user_id')):
+        if request.method == 'POST':
+            if form.validate_on_submit():
+                db.execute("""UPDATE board_content_table SET write_time='%s',board_content_title='%s',board_content='%s' WHERE board_content_idx = '%s'""" 
+                % (datetime.now(),form.content_title.data,form.content_text.data,str(data[0]['board_content_idx']) ))
+                db.commit() 
+                return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
+            else:
+                error = "수정 데이터 양식이 맞지 않습니다"
+                flash(error)
+                return render_template('/main/board_add.html',form=form,board_content_idx=board_content_idx,error=error)
+                
+        if password == None:
+            password = ""
+            
+        elif data[0]['content_password'] == password:
+            content_title = data[0]['board_content_title']
+            content_text = data[0]['board_content']
+            username = data[0]['write_user_name']
+            password = "****"
+            form = ContentAddForm(content_title=content_title,content_text=content_text,username=username,password=password,modify=True)
+            
+        elif password == '-1' and session.get('user_id') == data[0]['write_user_name']:
+            content_title = data[0]['board_content_title']
+            content_text = data[0]['board_content']
+            username = data[0]['write_user_name']
+            password = "****"
+            form = ContentAddForm(content_title=content_title,content_text=content_text,username=username,password=password,modify=True)
+                
         else:
-            error = "수정 데이터 양식이 맞지 않습니다"
+            error = "wrong password"
             flash(error)
-            return render_template('/main/board_add.html',form=form,board_content_idx=board_content_idx,error=error)
-            
-    if password == None:
-        password = ""
-        
-    elif data[0]['content_password'] == str(password):
-        content_title = data[0]['board_content_title']
-        content_text = data[0]['board_content']
-        username = data[0]['write_user_name']
-        password = "****"
-        form = ContentAddForm(content_title=content_title,content_text=content_text,username=username,password=password,modify=True)
-        
-    elif password == '-1' and session.get('user_id') == data[0]['write_user_name']:
-        content_title = data[0]['board_content_title']
-        content_text = data[0]['board_content']
-        username = data[0]['write_user_name']
-        password = "****"
-        form = ContentAddForm(content_title=content_title,content_text=content_text,username=username,password=password,modify=True)
-            
+            return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
+        return render_template('/main/board_add.html',form=form,board_content_idx=board_content_idx,error=error)
+
     else:
-        flash("wrong password")
+        error = "not same user"
+        flash(error) 
         return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
-        
-    return render_template('/main/board_add.html',form=form,board_content_idx=board_content_idx,error=error)
+
+    return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
 
 
 
 @clone_board_bp.route('/del/<int:board_content_idx>/<string:password>/')
-def delContent(board_content_idx,password):
+def delContent(board_content_idx,password=None):
     db = Database() 
-    ansPassword = db.executeAll("""SELECT content_password FROM board_content_table WHERE board_content_idx = '%s'"""%str(board_content_idx))[0]['content_password']
-    if ansPassword == str(password):
-        db.execute("""DELETE FROM board_content_table WHERE board_content_idx = '%s'""" %str(board_content_idx))
-        db.execute("""DELETE FROM comment_table WHERE board_idx = '%s'""" %str(board_content_idx))
-
+    data = db.executeAll("""SELECT write_user_name,login_user,content_password FROM board_content_table WHERE board_content_idx = '%s'"""%str(board_content_idx))
+    username = data[0]['write_user_name']
+    loginUser = data[0]['login_user']
+    ansPassword = data[0]['content_password']
+    if loginUser == 1:
+        if username == session.get('user_id'):
+            m 
         
-        db.execute("""SET @CNT = 0;""")
-        db.execute("""UPDATE board_content_table SET board_content_table.board_content_idx = @CNT:=@CNT+1;""")
-        db.execute("""ALTER TABLE board_content_table AUTO_INCREMENT=1;""")
-        db.commit()
     else:
-        flash("wrong password")
-        return redirect(url_for("clone_board.content",board_content_idx=board_content_idx)) 
+
+        if ansPassword == str(password):
+            db.execute("""DELETE FROM board_content_table WHERE board_content_idx = '%s'""" %str(board_content_idx))
+            db.execute("""DELETE FROM comment_table WHERE board_idx = '%s'""" %str(board_content_idx))
+            db.autoIncreSet("board_content_table","board_content_idx")
+            db.commit()
+        else:
+            flash("wrong password")
+            return redirect(url_for("clone_board.content",board_content_idx=board_content_idx)) 
     return redirect(url_for("clone_board.list"))
 
 
@@ -140,9 +155,7 @@ def delComment(board_content_idx,comment_password,comment_idx):
     if str(comment_password) == ansPassword:
         db.execute("""DELETE FROM comment_table WHERE comment_idx = '%s' """ %str(comment_idx))
         db.execute("""DELETE FROM comment_table WHERE parent_comment_idx = '%s' """ %str(comment_idx))
-        db.execute("""SET @CNT = 0;""")
-        db.execute("""UPDATE comment_table SET comment_table.comment_idx = @CNT:=@CNT+1;""")
-        db.execute("""ALTER TABLE comment_table AUTO_INCREMENT=1;""")
+        db.autoIncreSet("comment_table","coment_idx")
         db.commit()
     else:
         flash("wrong password")
