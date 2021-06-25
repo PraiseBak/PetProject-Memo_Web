@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 db = Database()
 login_bp = Blueprint('login',__name__,url_prefix='/')
+@login_bp.route('/login/',methods=['GET','POST'])
 @login_bp.route('/login/<string:before_page>',methods=['GET','POST'])
 def login(before_page=None):
 	form = UserLoginForm()
@@ -29,17 +30,21 @@ def login(before_page=None):
 		if error is None:
 			session.clear()
 			session['user_id'] = user
-			if before_page:
+			print("이전 페이지:",before_page)
+			if before_page == 'checklist':
+				return redirect(url_for(before_page+'.checklist'))
+			elif before_page != None:
 				return redirect(url_for(before_page+'.list'))
 			return redirect(url_for('main.index'))
 
 		flash(error)
 	return render_template('/main/login.html',form=form)
 
+@login_bp.route('/logout/',methods=['GET','POST'])
 @login_bp.route('/logout/<string:before_page>')
-def logout(before_page):
+def logout(before_page=None):
 	session.clear()
-	if before_page:
+	if before_page != "checklist" and before_page != None:
 		return redirect(url_for(before_page+'.list'))
 	return redirect(url_for('main.index'))
 

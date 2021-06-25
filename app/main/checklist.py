@@ -4,11 +4,11 @@ from app.forms.forms import UserAddCheck
 
 checklist_bp = Blueprint('checklist',__name__,url_prefix='/')
 @checklist_bp.route('/checklist',methods=['GET','POST'])
-
+@checklist_bp.route('/',methods=['GET','POST'])
 def checklist():
 	db = Database()
 	if g.user == None:
-		return redirect(url_for('login.login'))
+		return redirect(url_for('login.login',before_page='checklist'))
 	form = UserAddCheck()
 	user_idx = g.idx
 	check_list_data = db.executeAll("SELECT content,content_idx FROM check_list WHERE user_idx = '%s' " % (user_idx))
