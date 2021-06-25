@@ -34,6 +34,13 @@ class Database():
    def commit(self):
       self.db.commit()
 
+   def autoIncreSet(table,column):
+      db.execute("""SET @CNT = 0;""")
+      db.execute("""UPDATE %s SET %s.%s = @CNT:=@CNT+1;""" % (table,table,column))
+      db.execute("""ALTER TABLE %s AUTO_INCREMENT=1;""" %(table))
+      db.commit()
+
+
 
 if __name__ == "__main__":
     

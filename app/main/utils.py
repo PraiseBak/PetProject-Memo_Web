@@ -40,7 +40,46 @@ def getAutoIncrementQuery():
     WHERE table_name = '%s'
     AND table_schema = DATABASE();
     """ %(table)
-
     return autoIncreSQL
 
 
+def getPageBtnList(page,maxPage):
+    page_btn_list = []
+    leftLook = True
+    tmpPage = 0
+    i = 1
+    count = 1
+    page_btn_list.append(page)
+    while count != 10:
+        if leftLook:
+            tmpPage = page-i
+            if tmpPage > 0:
+                page_btn_list.append(tmpPage)
+                count += 1
+            else:
+                saveLeftIndex = -1
+                leftLook=False
+                i=0
+            if count == 5:
+                saveLeftIndex = i+1
+                leftLook=False
+                i=0
+        else:
+            tmpPage = page + i
+            if tmpPage <= maxPage:
+                page_btn_list.append(tmpPage)
+                count += 1
+            else:
+                break
+        i+=1
+
+    while count != 10 and saveLeftIndex != -1:
+        tmpPage = page-saveLeftIndex
+        if tmpPage > 0:
+            page_btn_list.append(tmpPage)
+            count += 1
+        else:
+            break
+        saveLeftIndex+=1
+    page_btn_list.sort()
+    return page_btn_list

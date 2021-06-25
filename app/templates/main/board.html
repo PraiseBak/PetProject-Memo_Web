@@ -37,7 +37,11 @@
                             {{ content['board_content_title'] }}
                             </td>
                             <td style = "cursor:pointer;" onClick = "location.href='/clone_board/content/{{content['board_content_idx']}}'">
-                            {{ content['write_user_name'] }}({{content['write_ip']}})
+                            {{ content['write_user_name'] }}
+
+                            {% if content['login_user'] != 1 %}
+                                ({{content['write_ip']}})
+                            {%endif%}
                             </td>
                             <td style = "cursor:pointer;" onClick = "location.href='/clone_board/content/{{content['board_content_idx']}}'">
                             {{ content['write_time'] }}
@@ -123,13 +127,14 @@
 
             
                 <center>
-                    <select name="search_option" id="search_option" style="width:10%;">
+                    <select name="search_option" id="search_option" style="width:10%; margin-right:3px; ">
                         <option value="write_user_name">글쓴이</option>
                         <option value="board_content_title">제목</option>
                         <option value="board_content">내용</option>
                     </select>
-                        <textarea class="search_content " name="search_content" id="search_content" maxlength="10" rows="1" style="width:20%;"></textarea>
-                    <a class="button big send_search" url="#" onclick=send_search(this)>검색</a>
+                        <input type="search" class="search_content" name="search_content" 
+                        id="search_content" maxlength="10" rows="1" style="width:20%; height:45px;"></input>
+                    <a class="button big send_search" url="#" onclick=send_search(this) style="height:45px;">검색</a>
                 </center>
                 
                 <style>
@@ -146,7 +151,7 @@
                     }
                     .send_search
                     {
-                        margin-right:32%;
+                        margin-right:30%;
                     }
                 </style>
                 

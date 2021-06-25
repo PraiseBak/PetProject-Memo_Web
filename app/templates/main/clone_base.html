@@ -21,8 +21,8 @@
                     <ul class="login">
                         <div style="text-align: center;">
                             {% if g.user %}
-                                <!--li><a href="/checklist" style="margin-bottom:10px;" class="button big checklist">MyCheckList</a></li!-->
-                                <li><a href="/profile" style="margin-bottom:10px;" class="button big">My Profile</a></li>
+                                <li><a href="/checklist" style="margin-bottom:10px;" class="button big checklist">MyCheckList</a></li>
+                                <li><a href="/profile/{{g.user}}" style="margin-bottom:10px;" class="button big">My Profile</a></li>
                                 <li><a href="/logout/clone_board" style="margin-bottom:10px;" class="button big">Logout</a></li>
                             {% else %}
                                 <li><a href="/login/clone_board" class="button big">Login</a></li>

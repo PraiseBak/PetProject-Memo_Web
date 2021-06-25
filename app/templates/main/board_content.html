@@ -42,16 +42,36 @@
             
                     <div class="btns">
                         <div class="modify">  
-                            <a href="#" url="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'],password=-1)}}" 
+                            {% if content[0]['login_user'] == 1%}
+                                {% if g.user == content[0]['write_user_name'] %}
+
+                                    <a href="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'],password=-1)}}" 
+                                    class="button" id="modifyBtn">수정</a>
+                                    <div class="delete"> 
+                                        <a href="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx'],password=-1) }}"
+                                        class="button" id="deleteBtn"> 삭제 </a>
+                                    </div>
+                                {% endif %}
+                                
+                            {% else %}
+                                <a href="#" url="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'],password=-1)}}" 
                                 class="button" id="modifyBtn" onclick="btn_click(this)">수정</a>
+                                <div class="delete"> 
+                                    <a href="#" url="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx'],password=-1) }}"
+                                    class="button" id="deleteBtn" onclick=btn_click(this)> 삭제 </a>
+                                </div>
+                            {% endif %}
+
                         </div>
-                        <div class="delete">  
-                            <a href="#" url="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx'],password=-1) }}"
-                                class="button" id="deleteBtn" onclick=btn_click(this)> 삭제 </a>
-                        </div>
-                        <div class="username">
+                        <div class="username">  
                         <br><br>
-                        &nbsp &nbsp &nbsp  {{content[0]['write_user_name']}} ({{content[0]['write_ip']}})
+                        &nbsp &nbsp &nbsp  {{content[0]['write_user_name']}} 
+                        
+                        {% if content[0]['login_user'] != 1%}
+                            ({{content[0]['write_ip']}})
+                        {% endif %}
+                            
+
                         </div>    
                     </div>
                     
@@ -145,6 +165,7 @@
                             <tr>
                                 <td style = "cursor:pointer;" onclick=comment_click(this,{{comment['comment_idx']}}) >
                                     {{ comment['username'] }}({{comment['write_ip']}})
+
                                 </td>
                                 <td style = "cursor:pointer; word-break:break-all;" onclick=comment_click(this,{{comment['comment_idx']}}) >
                                     {{ comment['comment'] }}
@@ -243,7 +264,6 @@
                     </form>
                 </div>
             </form>
-
 
             <style>
                 .content_area{
