@@ -12,7 +12,6 @@ def isLogged():
         logged = '1'
     return logged
 
-
 @clone_board_bp.route('/')
 @clone_board_bp.route('/list')
 def list():
@@ -53,14 +52,19 @@ def content(board_content_idx):
     comment = None
     db = Database() 
     form = CommentAddForm()
-    if request.method == 'POST' and form.validate_on_submit():
+    
+    if request.method == 'POST' and ((form.validate_on_submit()) or (session.get('user_id'))):
         username = form.username.data
         password = form.password.data
         comment = form.content_text.data
         comment_idx = db.executeAll("""SELECT COUNT(*) FROM comment_table WHERE board_idx='%s'""" %(board_content_idx))
+
         ip = get_covered_ip()
+        #로그인한 유저
+        if username == session.get('user_id'):
+            password = db.executeAll("""SELECT password FROM user WHERE id='%s'""" %(username))[0]['password']
         db.executeAll("""INSERT INTO comment_table (comment,username,password,write_time,board_idx,comment_idx,write_ip,login_user)
-         VALUES ('%s','%s','%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,comment_idx[0]['COUNT(*)']+1,ip,isLogged())) 
+        VALUES ('%s','%s','%s','%s','%s','%s','%s','%s')""" % (comment, username,password,datetime.now(),board_content_idx,comment_idx[0]['COUNT(*)']+1,ip,isLogged())) 
         db.commit()
         return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
@@ -151,14 +155,27 @@ def delContent(board_content_idx,password=None):
 @clone_board_bp.route('/delContent/<int:board_content_idx>/<string:comment_password>/<int:comment_idx>')
 def delComment(board_content_idx,comment_password,comment_idx):
     db = Database() 
-    ansPassword = db.executeAll("""SELECT password FROM comment_table WHERE board_idx = '%s' """ %str(board_content_idx))[comment_idx-1]['password']
-    if str(comment_password) == ansPassword:
-        db.execute("""DELETE FROM comment_table WHERE comment_idx = '%s' """ %str(comment_idx))
-        db.execute("""DELETE FROM comment_table WHERE parent_comment_idx = '%s' """ %str(comment_idx))
-        db.autoIncreSet("comment_table","coment_idx")
-        db.commit()
+    if session.get('user_id'):
+        data = db.executeAll("""SELECT username,login_user FROM comment_table WHERE board_idx = '%s' and comment_idx = '%s' """ %(str(board_content_idx),str(comment_idx)))
+
+        if (data[0]['username'] == session.get('user_id')) and data[0]['login_user'] == 1:
+            db.execute("""DELETE FROM comment_table WHERE comment_idx = '%s' """ %str(comment_idx))
+            db.execute("""DELETE FROM comment_table WHERE parent_comment_idx = '%s' """ %str(comment_idx))
+            db.autoIncreSet("comment_table","comment_idx")
+            db.commit()
+        else:
+            flash("wrong user")
     else:
-        flash("wrong password")
+        ansPassword = db.executeAll("""SELECT password FROM comment_table WHERE board_idx = '%s' """ %str(board_content_idx))
+        ansPassword = ansPassword[int(comment_idx)-1]['password']
+        if str(comment_password) == ansPassword:
+            db.execute("""DELETE FROM comment_table WHERE comment_idx = '%s' """ %str(comment_idx))
+            db.execute("""DELETE FROM comment_table WHERE parent_comment_idx = '%s' """ %str(comment_idx))
+            db.autoIncreSet("comment_table","comment_idx")
+            db.commit()
+        else:
+            flash("wrong password")
+
     return redirect(url_for("clone_board.content",board_content_idx=board_content_idx))
 
 
@@ -197,9 +214,9 @@ def add():
         text = form.content_text.data
         username = form.username.data
         password = form.password.data
-        if isLogged():
+        if isLogged() == '1':
             password = db.executeAll("""SELECT password FROM user WHERE id='%s'"""%(session.get('user_id')))[0]['password']
-            db.execute("""INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password,write_ip,login_user)
+        db.execute("""INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password,write_ip,login_user)
          VALUES ('%s','%s','%s','%s','%s','%s','%s')""" % (text, title,datetime.now(),username,password,get_covered_ip(),isLogged())) 
         db.commit()
         return redirect(url_for("clone_board.list"))
@@ -215,11 +232,20 @@ def recommendProcess(board_content_idx,mode):
     recommend_mode = "recommend"
     if mode != 1:
         recommend_mode = "unrecommend"
-    data = db.executeAll("""SELECT * FROM recommend_table WHERE board_content_idx ='%s' and %s_ip='%s'""" %(str(board_content_idx),recommend_mode,str(curIp)))
+    if session.get('user_id'):
+        data = db.executeAll("""SELECT * FROM recommend_table WHERE board_content_idx ='%s' and %s_ip='%s' and login_user='%s'""" %(str(board_content_idx),recommend_mode,str(curIp),session.get('user_id')))
+    else:
+        data = db.executeAll("""SELECT * FROM recommend_table WHERE board_content_idx ='%s' and %s_ip='%s'""" %(str(board_content_idx),recommend_mode,str(curIp)))
+
+        
+
     if len(data) != 0:
         flash("중복된 요청입니다.")
     else:
-        db.executeAll("""INSERT INTO recommend_table (board_content_idx, %s_ip) VALUES (%s,'%s') """ %(recommend_mode,board_content_idx,curIp))
+        if session.get('user_id') != None:
+            db.executeAll("""INSERT INTO recommend_table (board_content_idx, %s_ip,login_user) VALUES (%s,'%s','%s') """ %(recommend_mode,board_content_idx,curIp,session.get('user_id')))
+        else:
+            db.executeAll("""INSERT INTO recommend_table (board_content_idx, %s_ip) VALUES (%s,'%s') """ %(recommend_mode,board_content_idx,curIp))
         db.executeAll("""UPDATE board_content_table SET %s=%s+1 WHERE board_content_idx='%s' """ %(recommend_mode,recommend_mode,str(board_content_idx)))
         db.commit()
     return redirect(url_for("clone_board.content",board_content_idx=board_content_idx)) 
