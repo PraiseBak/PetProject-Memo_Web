@@ -49,7 +49,6 @@ def logout(before_page=None):
 	return redirect(url_for('main.index'))
 
 
-
 @login_bp.before_app_request
 def load_logged_in_user():
 	user_id = session.get('user_id')

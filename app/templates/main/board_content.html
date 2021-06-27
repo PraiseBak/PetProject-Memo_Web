@@ -44,7 +44,6 @@
                         <div class="modify">  
                             {% if content[0]['login_user'] == 1%}
                                 {% if g.user == content[0]['write_user_name'] %}
-
                                     <a href="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'],password=-1)}}" 
                                     class="button" id="modifyBtn">수정</a>
                                     <div class="delete"> 
@@ -54,12 +53,16 @@
                                 {% endif %}
                                 
                             {% else %}
-                                <a href="#" url="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'],password=-1)}}" 
-                                class="button" id="modifyBtn" onclick="btn_click(this)">수정</a>
-                                <div class="delete"> 
-                                    <a href="#" url="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx'],password=-1) }}"
-                                    class="button" id="deleteBtn" onclick=btn_click(this)> 삭제 </a>
-                                </div>
+                            
+                                {% if not g.user%}
+                                    <a href="#" url="{{ url_for('clone_board.modify',board_content_idx=content[0]['board_content_idx'],password=-1)}}" 
+                                    class="button" id="modifyBtn" onclick="btn_click(this)">수정</a>
+                                    <div class="delete"> 
+                                        <a href="#" url="{{ url_for('clone_board.delContent',board_content_idx=content[0]['board_content_idx'],password=-1) }}"
+                                        class="button" id="deleteBtn" onclick=btn_click(this)> 삭제 </a>
+                                    </div>
+                                {% endif %}
+                               
                             {% endif %}
 
                         </div>
@@ -153,9 +156,8 @@
         <br>
 
 
-
         <div class="comment_area">
-            <table class="table" style="table-layout:fixed;">
+            <table class="table" style="table-layout: fixed;" >
                 <tr class="thead-dark">
                 </tr>   
                 <tbody> 
@@ -163,8 +165,11 @@
                         {%if not comment['parent_comment_idx']%}
 
                             <tr>
-                                <td style = "cursor:pointer;" onclick=comment_click(this,{{comment['comment_idx']}}) >
-                                    {{ comment['username'] }}({{comment['write_ip']}})
+                                <td style = "cursor:pointer; " onclick=comment_click(this,{{comment['comment_idx']}}) >
+                                    {{ comment['username'] }}
+                                    {%if comment['login_user'] == 0 %}
+                                        ({{comment['write_ip']}})
+                                    {% endif %}
 
                                 </td>
                                 <td style = "cursor:pointer; word-break:break-all;" onclick=comment_click(this,{{comment['comment_idx']}}) >
@@ -177,10 +182,18 @@
                                 
                                 <td>
                                     <div id="comment_btns">
-                                        <div class=button id="del_btn" idx={{comment['comment_idx']}} onclick=btn_click(this,{{comment['comment_idx']}})
-                                            url="{{ url_for('clone_board.delComment',board_content_idx=content[0]['board_content_idx'],comment_password=-1,comment_idx=-1)}}">
-                                            삭제
-                                        </div>
+                                        {%if (comment['login_user'] == 1) and (g.user == comment['username']) %} 
+                                            <div class=button onclick=location.href="{{ url_for('clone_board.delComment',board_content_idx=content[0]['board_content_idx'],comment_password=-1,comment_idx=comment['comment_idx'])}}">
+                                                삭제
+                                            </div>
+
+                                        {% elif comment['login_user'] == 0 and not g.user %}
+                                            <div class=button id="del_btn" idx={{comment['comment_idx']}} onclick=btn_click(this,{{comment['comment_idx']}},0)
+                                                url="{{ url_for('clone_board.delComment',board_content_idx=content[0]['board_content_idx'],comment_password=-1,comment_idx=-1)}}">
+                                                삭제
+                                            </div>
+
+                                        {%endif%}
                                     </div>
                                 </td>
                                 <style>
@@ -194,27 +207,35 @@
                                 <form method="post" action="{{ url_for('clone_board.subCommentAdd',
                                             board_content_idx=board_content_idx,parent_comment_idx=comment['comment_idx'] )}}">
                                     {{form.csrf_token}}
-                                    <td style="border-bottom-style:hidden;  display:none; width:1000px;" id="comment_userinfo{{comment['comment_idx']}}"> <br>
-                                        <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" > 
-                                        <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
-                                            class="form-control" name="password" id="password" style="width:175px; height:32px; display:inline-block;">
-
-                                        <label for="content_text" style="font-size:16px;"></label>
-                                        <textarea name="content_text" id="content_text" rows="4"  ></textarea>
-                                        <input type="submit" style="font-size:16px;" value="등록">
+                                    <td style="border-bottom-style:hidden; display:none; " id="comment_userinfo{{comment['comment_idx']}}"> <br>
+                                        {% if g.user %}
+                                            <input type="username" value="{{g.user}}" class="form-control" name="username" id="username" readonly/> <br>
+                                            <input type="password" maxlength="10" value="****" size= "10"
+                                            class="form-control" name="password" id="password" style="width:185px; " readonly/>
+                                        {% else %}
+                                            <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" > <br>
+                                            <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
+                                            class="form-control" name="password" id="password" style="width:185px;">
+                                        {% endif %}
+                                            <label for="content_text" style="font-size:16px;"></label>
+                                            <textarea name="content_text" id="content_text" rows="4"></textarea>
+                                            <input type="submit" style="font-size:16px;" value="등록">
+                                        </form>
                                     </td>
-
                                 </form>
                             </tr>
 
                         {% for subComment in comment_data %}
                             {%if comment['comment_idx'] == subComment['parent_comment_idx']%}
-                                <tr style="border: none;">
+                                <tr style="border: none;" >
                                     
                                     <td>
                                         ㄴ &nbsp{{ subComment['username'] }}
+                                        {%if subComment['login_user'] == 0 %}
+                                            ({{subComment['write_ip']}})
+                                        {% endif %}
                                     </td>
-                                    <td style = "word-break:break-all;" >
+                                    <td width="50" style = "word-break:break-all; width:200px;" >
                                         {{ subComment['comment'] }}
                                     </td>
                                     
@@ -223,12 +244,22 @@
                                     </td>
                                     
                                     <td>
-                                        <div id="comment_btns">
-                                            <div class=button id="del_btn" idx={{subComment['comment_idx']}} onclick=btn_click(this,{{subComment['comment_idx']}})
-                                                url="{{ url_for('clone_board.delComment',board_content_idx=content[0]['board_content_idx'],comment_password=-1,comment_idx=-1)}}">
-                                                삭제
+                                        {%if (subComment['login_user'] == 1 and (g.user == subComment['username'])) %} 
+                                            <div id="comment_btns">
+                                                <div class=button onclick=location.href="{{ url_for('clone_board.delComment',board_content_idx=content[0]['board_content_idx'],comment_password=-1,comment_idx=subComment['comment_idx'])}}">
+                                                    삭제
+                                                </div>
+                                            <div>
+
+                                        {% elif subComment['login_user'] == 0 and not g.user %}
+                                            <div id="comment_btns">
+                                                <div class=button id="del_btn" idx={{subComment['comment_idx']}} onclick=btn_click(this,{{subComment['comment_idx']}},0)
+                                                    url="{{ url_for('clone_board.delComment',board_content_idx=content[0]['board_content_idx'],comment_password=-1,comment_idx=-1)}}">
+                                                    삭제
+                                                </div>
                                             </div>
-                                        </div>
+                                            
+                                        {% endif %}
                                     </td>
                                     <style>
                                         #comment_btns{
@@ -255,9 +286,15 @@
             <form method="post" class="post-form" id="myAction" action="{{ url_for('clone_board.content',board_content_idx=board_content_idx) }}">
                 {{form.csrf_token}}
                 <div class="content_area">
-                    <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" > <br>
-                    <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
+                    {% if g.user %}
+                        <input type="username" value="{{g.user}}" class="form-control" name="username" id="username" readonly/> <br>
+                        <input type="password" maxlength="10" value="****" size= "10"
+                        class="form-control" name="password" id="password" style="width:185px; " readonly/>
+                    {% else %}
+                        <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" > <br>
+                        <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
                         class="form-control" name="password" id="password" style="width:185px;">
+                    {% endif %}
                         <label for="content_text" style="font-size:16px;"></label>
                         <textarea name="content_text" id="content_text" rows="4"></textarea>
                         <input type="submit" style="font-size:16px;" value="등록">
@@ -293,7 +330,6 @@ window.onload = function() {
 function btn_click(obj)
 {
     var idx = $(obj).attr('idx');
-    
     var result = prompt("비밀번호를 입력하세요");
     var url = $(obj).attr('url');
     if(result != "")
@@ -304,12 +340,12 @@ function btn_click(obj)
             url = url.replace(-1,idx);
         }
         location.href = url;
-
     }
     else
     {
         alert("비밀번호를 입력해주세요");
     }
+    
 
 }
 

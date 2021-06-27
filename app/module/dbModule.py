@@ -34,11 +34,11 @@ class Database():
    def commit(self):
       self.db.commit()
 
-   def autoIncreSet(table,column):
-      db.execute("""SET @CNT = 0;""")
-      db.execute("""UPDATE %s SET %s.%s = @CNT:=@CNT+1;""" % (table,table,column))
-      db.execute("""ALTER TABLE %s AUTO_INCREMENT=1;""" %(table))
-      db.commit()
+   def autoIncreSet(self,table,column):
+      self.execute("""SET @CNT = 0;""")
+      self.execute("""UPDATE %s SET %s.%s = @CNT:=@CNT+1;""" % (table,table,column))
+      self.execute("""ALTER TABLE %s AUTO_INCREMENT=1;""" %(table))
+      self.commit()
 
 
 

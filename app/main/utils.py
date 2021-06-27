@@ -30,7 +30,6 @@ def getPageQuery(page,limit,mode=None,content=""):
     ORDER BY board_content_idx DESC
     limit %s,%s;
     """ % (modeAndValueSQL,str(startIdx),str(limit))
-
     return pageSQL,getCountSQL
 
 def getAutoIncrementQuery():
