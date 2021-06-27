@@ -15,6 +15,7 @@ SECRET_KEY = os.urandom(32)
 app = Flask(__name__)
 app.jinja_env.filters['times'] = times
 app.config['SECRET_KEY'] = SECRET_KEY
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 
 app.register_blueprint(main)

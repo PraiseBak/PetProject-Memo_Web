@@ -1,8 +1,14 @@
-from flask import Blueprint, request, render_template, flash, redirect, url_for, g,session
+from flask import Blueprint, request, render_template, flash, redirect, url_for, g,session, jsonify
 from app.module.dbModule import Database
 from app.forms.forms import CommentAddForm, ContentAddForm
 from datetime import datetime
 from app.main.utils import *
+from werkzeug.utils import secure_filename
+
+import os
+
+
+
 clone_board_bp = Blueprint('clone_board',__name__,url_prefix='/clone_board') 
 
 def isLogged():
@@ -84,8 +90,11 @@ def modify(board_content_idx,password = None):
     ansPassword = data[0]['content_password']
     #제출된 사항
     if request.method == 'POST':
+        
         if form.validate_on_submit():
-            db.execute("""UPDATE board_content_table SET write_time='%s',board_content_title='%s',board_content='%s' WHERE board_content_idx = '%s'""" 
+            print("""UPDATE board_content_table SET write_time='%s',board_content_title='%s',board_content='%s' WHERE board_content_idx = '%s';""" 
+            % (datetime.now(),form.content_title.data,form.content_text.data,board_content_idx ))
+            db.execute("""UPDATE board_content_table SET write_time='%s',board_content_title='%s',board_content='%s' WHERE board_content_idx = '%s';""" 
             % (datetime.now(),form.content_title.data,form.content_text.data,board_content_idx ))
             db.commit() 
             return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
@@ -251,3 +260,21 @@ def recommendProcess(board_content_idx,mode):
     return redirect(url_for("clone_board.content",board_content_idx=board_content_idx)) 
     
     
+
+
+@clone_board_bp.route('/uploadImgs',methods=['GET', 'POST'])
+def uploadImgs():
+    image_path = "imgsTest"
+    if request.method == 'POST':
+        file = request.files['fileData']
+        filename = secure_filename(file.filename)
+        idx = 1
+        while os.path.exists(os.path.join(image_path, filename)):
+            tmp = secure_filename(file.filename).split('.')
+            filename = tmp[0] + str(idx) + '.' + tmp[1]
+            idx+=1
+
+        file.save(os.path.join(image_path, filename))
+        return jsonify({"filename":filename})
+
+

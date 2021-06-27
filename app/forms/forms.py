@@ -22,7 +22,7 @@ class UserAddCheck(FlaskForm):
 
 class ContentAddForm(FlaskForm):
     content_title = StringField('제목', validators=[DataRequired(), Length(min=2, max=30)])
-    content_text = StringField('', validators=[DataRequired(), Length(min=1, max=100)])
+    content_text = StringField('', validators=[DataRequired(), Length(min=1, max=2000)])
     username = StringField('사용자이름', validators=[DataRequired(), Length(min=2, max=25)])
     password = PasswordField('비밀번호', validators=[DataRequired(),Length(min=4, max=24)])
     modify = BooleanField('')

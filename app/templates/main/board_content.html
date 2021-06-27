@@ -8,7 +8,6 @@
         <div class="container my-3">
             
             <header>
-
                 <br>
                 {% for field, errors in form.errors.items() %}
                 <div class="alert alert-danger" role="alert">
@@ -69,7 +68,6 @@
                         <div class="username">  
                         <br><br>
                         &nbsp &nbsp &nbsp  {{content[0]['write_user_name']}} 
-                        
                         {% if content[0]['login_user'] != 1%}
                             ({{content[0]['write_ip']}})
                         {% endif %}
@@ -128,8 +126,10 @@
                     return comment_idx;
                 }
             </script>
-            <div class="write_div" style="float:left;">
-                &nbsp&nbsp&nbsp {{content[0]['board_content']}}
+            &nbsp&nbsp&nbsp 
+
+            <div class="write_div" contentEditable="true" style="float:left;">
+                {{content[0]['board_content']}}
             </div>
             
 
