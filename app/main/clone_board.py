@@ -133,8 +133,8 @@ def delContent(board_content_idx,password=None):
     ansPassword = data[0]['content_password']
     if loginUser == 1:
         if username == session.get('user_id'):
-            m 
-        
+            
+
     else:
 
         if ansPassword == str(password):
