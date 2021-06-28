@@ -3,6 +3,8 @@
 
 <html>
     <body>
+        {{url_for('static',filename="test1234")}}
+        
         <div class="container my-3">
             <form method="post" class="post-form">
                 {{ form.csrf_token }}
@@ -14,6 +16,8 @@
                         <input type="content_title" class="form-control" placeholder="제목을 입력해주세요." name="content_title" id="content_title" value={{ form.data.content_title or ""}}>
                     {% else %}
                         <input type="username" placeholder="닉네임" class="form-control" name="username" id="username" value='' <br>
+                        <div id="imgArea">
+                        </div>
                         <input type="password" maxlength="10" placeholder="비밀번호" size= "10"
                         class="form-control" name="password" id="password" style="width:185px;" value='' > 
                         <input type="content_title"  placeholder="제목을 입력해주세요." class="form-control" name="content_title"
@@ -29,17 +33,24 @@
                         }
                     </style>
                     <br>
-                    <input type="file" name="fileData" id="upFile">
+
+
+                    <input type="file" onclick="" name="fileData" id="upFile">
                         <div id="progress">
                             <div class="bar" style="width: 0%;"></div>
                         </div>
                     
+                  <div id="tmpTextArea" contentEditable="true" style="height: 200px; outline: 1px solid ;">
+                    {{form.data.content_text or ''}}
+                  </div>  
 
-                
+
                 <form action="{{ url_for('clone_board.list',board_content_idx=board_content_idx) if not form.data.modify else url_for('clone_board.modify',board_content_idx=board_content_idx) }}" method="post">
                     <label for="content_text" style="font-size:16px;"></label>
-                    <textarea name="content_text" id="content_text" rows="15">{{form.data.content_text or ''}}</textarea>
-                    <input type="submit" style="font-size:16px;" value="등록">
+                    <div style="display:none"> 
+                      <textarea type="hidden" name="content_text" value="" id="content_text" rows="15" >{{form.data.content_text or ''}}</textarea>
+                    </div>
+                    <input type="submit" onclick="setDivToTextArea()" style="font-size:16px;" value="등록">
                 </form>
 
 
@@ -71,6 +82,21 @@
 <script src="/static/js/jquery.fileupload.js"></script>
 <script>
 
+  function addImg2(imgName){ 
+      var list = document.querySelector("#tmpTextArea");
+      var img = document.createElement("img");
+      img.src = "/static/"+imgName;
+      img.width = 200;
+      img.height = 150;
+      list.appendChild(img);
+    };
+
+  function setDivToTextArea(){
+   	var text = document.getElementById('tmpTextArea').innerText;
+    alert(text);
+    var content_text = document.getElementById('content_text').value=text;
+  };
+
   $(document).ready(function() {
     $('#upFile').fileupload({
       url : 'uploadImgs',
@@ -92,10 +118,8 @@
       }, done: function (e, data) {
         var code = data.result.code;
         var msg = data.result.msg;
-        alert(data.result['filename']);
         alert("성공");
-
-        alert(filename);
+        addImg2(data.result['filepath']);
       }, fail: function(e, data){
         // data.errorThrown
         console.log(e, data)
@@ -105,6 +129,7 @@
         foo = data;
       }
     });
+
   });
 </script>
 
