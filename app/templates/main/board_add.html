@@ -3,7 +3,6 @@
 
 <html>
     <body>
-        {{url_for('static',filename="test1234")}}
         
         <div class="container my-3">
             <form method="post" class="post-form">
@@ -39,10 +38,11 @@
                         <div id="progress">
                             <div class="bar" style="width: 0%;"></div>
                         </div>
-                    
-                  <div id="tmpTextArea" contentEditable="true" style="height: 200px; outline: 1px solid ;">
-                    {{form.data.content_text or ''}}
-                  </div>  
+                  <br> 
+
+                  <div id="tmpTextArea" contentEditable="true" style=" outline: 1px; min-height:200px; outline:1px solid; white-space: pre-wrap; text-align:left;">{{form.data.content_text or ''}}</div>
+
+
 
 
                 <form action="{{ url_for('clone_board.list',board_content_idx=board_content_idx) if not form.data.modify else url_for('clone_board.modify',board_content_idx=board_content_idx) }}" method="post">
@@ -71,9 +71,6 @@
     <br>
 </html>
 
-
-
-
 {% endblock %}
 
 {% block script %}
@@ -89,11 +86,12 @@
       img.width = 200;
       img.height = 150;
       list.appendChild(img);
+      list.
+      alert(img.index());
     };
 
   function setDivToTextArea(){
-   	var text = document.getElementById('tmpTextArea').innerText;
-    alert(text);
+   	var text = document.getElementById('tmpTextArea').innerHTML;
     var content_text = document.getElementById('content_text').value=text;
   };
 
@@ -105,6 +103,10 @@
       add: function(e, data){
         var uploadFile = data.files[0];
         var isValid = true;
+        var text = document.getElementById('tmpTextArea').innerText;
+        alert("테스트"); 
+        alert(text);
+
         if (!(/png|jpe?g|gif/i).test(uploadFile.name)) {
           alert('png, jpg, gif 만 가능합니다');
           isValid = false;

@@ -95,7 +95,6 @@
                         list-style: none;
                     }
                     .upside{
-                        border-bottom: 2px solid #bcbcbc; 
                         height: 85px;
 
                     }
@@ -128,16 +127,16 @@
             &nbsp&nbsp&nbsp 
 
 
-            
-
-            <div class="write_div" contentEditable="false" style="float:left;">
-                {{content[0]['board_content']}}
-            </div>
-            
+            <!------여기
+            *
+            *
+            *
+            *
+            -->
+            <div id="contentArea" contentEditable="false" style="outline: 1px; min-height:200px; outline:1px solid; white-space: pre-wrap; text-align:left;">{% for content in content_test_list %}{{content}}{% endfor%}</div>
 
             <br><br><br><br>
         </div> 
-        <hr color= "black">
         <div class="recommend_area">
             <a href="{{ url_for('clone_board.recommendProcess',board_content_idx=content[0]['board_content_idx'],mode=1)}}" 
                 class="button">
@@ -326,6 +325,12 @@
 
 window.onload = function() {
     var form_url = $("#myAction").attr('action');
+    var contentArea = document.getElementById("contentArea");
+    var text = contentArea.innerText;
+    contentArea.innerText = "";
+    var test = document.createElement("div");
+    test.innerHTML = text;
+    contentArea.appendChild(test);
 }
 
 function btn_click(obj)

@@ -75,7 +75,8 @@ def content(board_content_idx):
         return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
     comment = db.executeAll("""SELECT * FROM comment_table WHERE board_idx = %s""" %str(board_content_idx))
-    return render_template('/main/board_content.html',test=data[0]['board_content'],content=data,form=form,board_content_idx=board_content_idx,comment_data=comment)
+    return render_template('/main/board_content.html',content_test_list=data[0]['board_content'].split('\n'),
+     content=data,form=form,board_content_idx=board_content_idx,comment_data=comment)
 
 
 @clone_board_bp.route('/modify/<int:board_content_idx>',methods=['POST','GET'])
@@ -152,6 +153,7 @@ def delContent(board_content_idx,password=None):
         if ansPassword == str(password):
             db.execute("""DELETE FROM board_content_table WHERE board_content_idx = '%s'""" %str(board_content_idx))
             db.execute("""DELETE FROM comment_table WHERE board_idx = '%s'""" %str(board_content_idx))
+            db.execute("""DELETE FROM recommend_table WHERE board_idx = '%s'""" %str(board_content_idx))
             db.autoIncreSet("board_content_table","board_content_idx")
             db.commit()
         else:
@@ -227,6 +229,7 @@ def add():
             password = db.executeAll("""SELECT password FROM user WHERE id='%s'"""%(session.get('user_id')))[0]['password']
         sql = """INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password,write_ip,login_user)
          VALUES ('%s','%s','%s','%s','%s','%s','%s');""" % (text, title,datetime.now(),username,password,get_covered_ip(),isLogged())
+        print(sql)
         db.executeAll(sql) 
         db.commit()
         return redirect(url_for("clone_board.list"))
