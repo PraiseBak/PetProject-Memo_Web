@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, flash, redirect, url_for, g,session, jsonify
+from flask import Blueprint, request, render_template, flash, redirect, url_for, g,session, jsonify, Flask
 from app.module.dbModule import Database
 from app.forms.forms import CommentAddForm, ContentAddForm
 from datetime import datetime
@@ -75,7 +75,7 @@ def content(board_content_idx):
         return redirect(url_for('clone_board.content',board_content_idx=board_content_idx))
     data = db.executeAll("""SELECT * FROM board_content_table WHERE board_content_idx = %s""" %str(board_content_idx))
     comment = db.executeAll("""SELECT * FROM comment_table WHERE board_idx = %s""" %str(board_content_idx))
-    return render_template('/main/board_content.html',content=data,form=form,board_content_idx=board_content_idx,comment_data=comment)
+    return render_template('/main/board_content.html',test=data[0]['board_content'],content=data,form=form,board_content_idx=board_content_idx,comment_data=comment)
 
 
 @clone_board_bp.route('/modify/<int:board_content_idx>',methods=['POST','GET'])
@@ -219,14 +219,15 @@ def add():
         error = "데이터 양식이 맞지 않습니다"
         flash(error)
     elif request.method == 'POST':
-        title = form.content_title.data
-        text = form.content_text.data
+        title = form.content_title.data.replace("%","%%")
+        text = form.content_text.data.replace("%","%%")
         username = form.username.data
         password = form.password.data
         if isLogged() == '1':
             password = db.executeAll("""SELECT password FROM user WHERE id='%s'"""%(session.get('user_id')))[0]['password']
-        db.execute("""INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password,write_ip,login_user)
-         VALUES ('%s','%s','%s','%s','%s','%s','%s')""" % (text, title,datetime.now(),username,password,get_covered_ip(),isLogged())) 
+        sql = """INSERT INTO board_content_table (board_content,board_content_title,write_time,write_user_name,content_password,write_ip,login_user)
+         VALUES ('%s','%s','%s','%s','%s','%s','%s');""" % (text, title,datetime.now(),username,password,get_covered_ip(),isLogged())
+        db.executeAll(sql) 
         db.commit()
         return redirect(url_for("clone_board.list"))
     
@@ -264,17 +265,19 @@ def recommendProcess(board_content_idx,mode):
 
 @clone_board_bp.route('/uploadImgs',methods=['GET', 'POST'])
 def uploadImgs():
-    image_path = "imgsTest"
+
     if request.method == 'POST':
         file = request.files['fileData']
         filename = secure_filename(file.filename)
         idx = 1
-        while os.path.exists(os.path.join(image_path, filename)):
+        while os.path.exists("/static/img/"+filename):
+            
             tmp = secure_filename(file.filename).split('.')
             filename = tmp[0] + str(idx) + '.' + tmp[1]
             idx+=1
+        file.save("./app/static/img/"+secure_filename(file.filename))
 
-        file.save(os.path.join(image_path, filename))
-        return jsonify({"filename":filename})
+        return jsonify({"filepath":"img/"+filename})
 
 
+ 

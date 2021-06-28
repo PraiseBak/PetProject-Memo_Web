@@ -4,7 +4,6 @@
 <html>
                 
     <body>
-
         <div class="container my-3">
             
             <header>
@@ -128,7 +127,10 @@
             </script>
             &nbsp&nbsp&nbsp 
 
-            <div class="write_div" contentEditable="true" style="float:left;">
+
+            
+
+            <div class="write_div" contentEditable="false" style="float:left;">
                 {{content[0]['board_content']}}
             </div>
             
@@ -136,7 +138,6 @@
             <br><br><br><br>
         </div> 
         <hr color= "black">
-        
         <div class="recommend_area">
             <a href="{{ url_for('clone_board.recommendProcess',board_content_idx=content[0]['board_content_idx'],mode=1)}}" 
                 class="button">
@@ -346,7 +347,6 @@ function btn_click(obj)
         alert("비밀번호를 입력해주세요");
     }
     
-
 }
 
 function comment_click(obj,idx)
