@@ -153,7 +153,7 @@ def delContent(board_content_idx,password=None):
         if ansPassword == str(password):
             db.execute("""DELETE FROM board_content_table WHERE board_content_idx = '%s'""" %str(board_content_idx))
             db.execute("""DELETE FROM comment_table WHERE board_idx = '%s'""" %str(board_content_idx))
-            db.execute("""DELETE FROM recommend_table WHERE board_idx = '%s'""" %str(board_content_idx))
+            db.execute("""DELETE FROM recommend_table WHERE board_content_idx = '%s'""" %str(board_content_idx))
             db.autoIncreSet("board_content_table","board_content_idx")
             db.commit()
         else:
